@@ -42,9 +42,14 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               Поддержка
             </button>
           </div>
-          <Button onClick={onStart} className="shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
-            Начать бесплатно
-          </Button>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={onStart} className="border-primary/30 hover:border-primary hover:bg-primary/5">
+              Войти
+            </Button>
+            <Button onClick={onStart} className="shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
+              Зарегистрироваться
+            </Button>
+          </div>
         </div>
       </header>
 
