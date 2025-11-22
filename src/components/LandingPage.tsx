@@ -33,12 +33,12 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         </div>
       </header>
 
-      <section className="pt-40 pb-32 px-6 relative overflow-hidden">
+      <section className="pt-32 pb-24 px-6 relative overflow-hidden">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
         
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center relative z-10">
-          <div className="space-y-8">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr,1.1fr] gap-12 lg:gap-20 items-center relative z-10">
+          <div className="space-y-7">
             <div className="inline-block">
               <div className="px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full text-primary text-sm font-semibold border border-primary/20">
                 <Icon name="Sparkles" size={14} className="inline mr-2" />
@@ -46,22 +46,22 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               </div>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-black text-foreground leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-[1.1]">
               Ваше семейное древо{' '}
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-gradient">
                 оживает
               </span>
             </h1>
             
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
               Создавайте интерактивное генеалогическое древо, добавляйте фотографии и истории, 
               сохраняйте память о каждом члене семьи на века.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Button 
                 onClick={onStart} 
-                className="text-lg px-10 py-7 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 transition-all hover:scale-105" 
+                className="text-lg px-10 py-6 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 transition-all hover:scale-105" 
                 size="lg"
               >
                 <Icon name="TreePine" className="mr-2" size={20} />
@@ -69,7 +69,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               </Button>
               <Button 
                 variant="outline" 
-                className="text-lg px-10 py-7 border-2 hover:border-primary hover:bg-primary/5 transition-all hover:scale-105" 
+                className="text-lg px-10 py-6 border-2 hover:border-primary hover:bg-primary/5 transition-all hover:scale-105" 
                 size="lg"
               >
                 <Icon name="Play" className="mr-2" size={20} />
@@ -77,32 +77,33 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               </Button>
             </div>
 
-            <div className="flex items-center gap-8 pt-8">
+            <div className="flex items-center gap-6 pt-6">
               <div className="flex -space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 border-2 border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white"></div>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white flex items-center justify-center text-white text-xs font-bold">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white shadow-md"></div>
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 border-2 border-white shadow-md"></div>
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white shadow-md"></div>
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white shadow-md flex items-center justify-center text-white text-xs font-bold">
                   +12
                 </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                <div className="font-bold text-foreground">1000+ семей</div>
-                <div>уже создали своё древо</div>
+              <div className="text-sm">
+                <div className="font-bold text-foreground text-base">1000+ семей</div>
+                <div className="text-muted-foreground">уже создали своё древо</div>
               </div>
             </div>
           </div>
 
-          <div className="relative h-[500px] flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-primary/20 rounded-[3rem] blur-2xl animate-pulse"></div>
+          <div className="relative h-[450px] md:h-[550px] flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-accent/15 to-primary/15 rounded-[2.5rem] blur-3xl opacity-60"></div>
             
-            <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/50">
+            <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl border-[6px] border-white/60">
               <img 
-                src="https://cdn.poehali.dev/projects/154e461b-cfd7-4d9f-96c7-91ca810ff9e7/files/3056b5be-4075-4e11-ae73-20847d5480db.jpg"
+                src="https://cdn.poehali.dev/projects/154e461b-cfd7-4d9f-96c7-91ca810ff9e7/files/9de6bb42-8f27-4563-bac8-f444f4bf7c69.jpg"
                 alt="Семья из трёх поколений создаёт семейное древо"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/5"></div>
+              <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-[2.5rem]"></div>
             </div>
           </div>
         </div>
