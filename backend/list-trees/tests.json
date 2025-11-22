@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "name": "List user trees",
+      "method": "GET",
+      "path": "/?user_email=test@example.com",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "trees": "array",
+        "count": "number"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Load tree by ID",
+      "method": "GET",
+      "path": "/?tree_id=1",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "tree_id": "number",
+        "title": "string",
+        "nodes": "array",
+        "edges": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

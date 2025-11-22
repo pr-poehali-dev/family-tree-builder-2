@@ -1,0 +1,154 @@
+'''
+Business: Save family tree to database
+Args: event - dict with httpMethod, body (tree_id, user_email, nodes, edges, title)
+      context - object with request_id
+Returns: HTTP response with saved tree_id
+'''
+import json
+import os
+from typing import Dict, Any, List
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    method: str = event.get('httpMethod', 'POST')
+    
+    if method == 'OPTIONS':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, X-User-Email',
+                'Access-Control-Max-Age': '86400'
+            },
+            'body': ''
+        }
+    
+    if method != 'POST':
+        return {
+            'statusCode': 405,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Method not allowed'})
+        }
+    
+    body_data = json.loads(event.get('body', '{}'))
+    user_email = body_data.get('user_email') or event.get('headers', {}).get('X-User-Email')
+    
+    if not user_email:
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'user_email is required'})
+        }
+    
+    tree_id = body_data.get('tree_id')
+    nodes: List[Dict] = body_data.get('nodes', [])
+    edges: List[Dict] = body_data.get('edges', [])
+    title: str = body_data.get('title', 'Моё семейное древо')
+    description: str = body_data.get('description', '')
+    
+    database_url = os.environ.get('DATABASE_URL')
+    
+    conn = psycopg2.connect(database_url)
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    
+    cursor.execute(
+        "INSERT INTO \"t_p57451291_family_tree_builder_\".users (email) VALUES (%s) ON CONFLICT (email) DO UPDATE SET updated_at = CURRENT_TIMESTAMP RETURNING id",
+        (user_email,)
+    )
+    user_result = cursor.fetchone()
+    user_id = user_result['id']
+    
+    if tree_id:
+        cursor.execute(
+            "UPDATE \"t_p57451291_family_tree_builder_\".family_trees SET title = %s, description = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s AND user_id = %s RETURNING id",
+            (title, description, tree_id, user_id)
+        )
+        result = cursor.fetchone()
+        if result:
+            saved_tree_id = result['id']
+        else:
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Tree not found or access denied'})
+            }
+    else:
+        cursor.execute(
+            "INSERT INTO \"t_p57451291_family_tree_builder_\".family_trees (user_id, title, description) VALUES (%s, %s, %s) RETURNING id",
+            (user_id, title, description)
+        )
+        result = cursor.fetchone()
+        saved_tree_id = result['id']
+    
+    cursor.execute(
+        "DELETE FROM \"t_p57451291_family_tree_builder_\".persons WHERE tree_id = %s",
+        (saved_tree_id,)
+    )
+    
+    for node in nodes:
+        cursor.execute(
+            """INSERT INTO "t_p57451291_family_tree_builder_".persons 
+            (tree_id, first_name, last_name, middle_name, maiden_name, gender, birth_date, birth_place, 
+            death_date, death_place, is_alive, occupation, bio, history_context, position_x, position_y)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            (
+                saved_tree_id, node.get('firstName'), node.get('lastName'), 
+                node.get('middleName'), node.get('maidenName'), node.get('gender'),
+                node.get('birthDate'), node.get('birthPlace'), node.get('deathDate'),
+                node.get('deathPlace'), node.get('isAlive', True), node.get('occupation'),
+                node.get('bio'), node.get('historyContext'), node.get('x', 0), node.get('y', 0)
+            )
+        )
+    
+    cursor.execute(
+        "DELETE FROM \"t_p57451291_family_tree_builder_\".relationships WHERE tree_id = %s",
+        (saved_tree_id,)
+    )
+    
+    cursor.execute(
+        "SELECT id, first_name, last_name FROM \"t_p57451291_family_tree_builder_\".persons WHERE tree_id = %s",
+        (saved_tree_id,)
+    )
+    saved_persons = cursor.fetchall()
+    
+    node_id_map = {}
+    for i, node in enumerate(nodes):
+        if i < len(saved_persons):
+            node_id_map[node['id']] = saved_persons[i]['id']
+    
+    for edge in edges:
+        source_db_id = node_id_map.get(edge['source'])
+        target_db_id = node_id_map.get(edge['target'])
+        
+        if source_db_id and target_db_id:
+            rel_type = edge.get('type', 'parent')
+            if rel_type == 'spouse':
+                rel_type_str = 'spouse'
+            else:
+                rel_type_str = 'parent'
+            
+            cursor.execute(
+                """INSERT INTO "t_p57451291_family_tree_builder_".relationships 
+                (tree_id, source_person_id, target_person_id, relationship_type)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (source_person_id, target_person_id, relationship_type) DO NOTHING""",
+                (saved_tree_id, source_db_id, target_db_id, rel_type_str)
+            )
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return {
+        'statusCode': 200,
+        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+        'isBase64Encoded': False,
+        'body': json.dumps({
+            'tree_id': saved_tree_id,
+            'message': 'Tree saved successfully',
+            'nodes_count': len(nodes),
+            'edges_count': len(edges)
+        })
+    }

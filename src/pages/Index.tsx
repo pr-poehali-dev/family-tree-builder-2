@@ -27,6 +27,12 @@ const INITIAL_NODES: FamilyNode[] = [
   }
 ];
 
+const API_URLS = {
+  saveTree: 'https://functions.poehali.dev/aeece77d-47a7-4370-aaaf-cd7f3f0c85a3',
+  loadTree: 'https://functions.poehali.dev/b34d5849-b70f-4939-be6a-ca52bbbf3b71',
+  listTrees: 'https://functions.poehali.dev/37b2ca54-22fb-4d55-a1eb-6415bea1e80f'
+};
+
 export default function Index() {
   const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree'>('landing');
   const [onboardingStep, setOnboardingStep] = useState(1);
@@ -38,6 +44,9 @@ export default function Index() {
   const [isPanning, setIsPanning] = useState(false);
   const [dragNodeId, setDragNodeId] = useState<string | null>(null);
   const [mode, setMode] = useState<'canvas' | 'timeline'>('canvas');
+  const [currentTreeId, setCurrentTreeId] = useState<number | null>(null);
+  const [userEmail, setUserEmail] = useState<string>('demo@familytree.com');
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -52,6 +61,8 @@ export default function Index() {
   useEffect(() => {
     const savedNodes = localStorage.getItem('familyTree_nodes');
     const savedEdges = localStorage.getItem('familyTree_edges');
+    const savedTreeId = localStorage.getItem('familyTree_treeId');
+    
     if (savedNodes) {
       try {
         setNodes(JSON.parse(savedNodes));
@@ -66,12 +77,50 @@ export default function Index() {
         console.error('Error loading edges', e);
       }
     }
+    if (savedTreeId) {
+      setCurrentTreeId(parseInt(savedTreeId));
+    }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('familyTree_nodes', JSON.stringify(nodes));
     localStorage.setItem('familyTree_edges', JSON.stringify(edges));
   }, [nodes, edges]);
+
+  const saveTreeToDatabase = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(API_URLS.saveTree, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Email': userEmail
+        },
+        body: JSON.stringify({
+          tree_id: currentTreeId,
+          user_email: userEmail,
+          title: 'Моё семейное древо',
+          nodes,
+          edges
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setCurrentTreeId(data.tree_id);
+        localStorage.setItem('familyTree_treeId', data.tree_id.toString());
+        alert('Древо успешно сохранено в базе данных!');
+      } else {
+        alert('Ошибка сохранения: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error saving tree:', error);
+      alert('Ошибка при сохранении древа');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleStart = () => setCurrentView('onboarding');
 
@@ -322,9 +371,21 @@ export default function Index() {
         </div>
         <div className="flex gap-4 items-center">
           <button
+            onClick={saveTreeToDatabase}
+            disabled={isSaving}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 text-sm font-medium flex items-center gap-2"
+            title="Сохранить в базу данных"
+          >
+            <Icon name="Save" size={16} />
+            {isSaving ? 'Сохранение...' : 'Сохранить'}
+          </button>
+
+          <div className="w-px h-6 bg-border mx-2"></div>
+
+          <button
             onClick={handleExport}
             className="text-muted-foreground hover:text-primary transition-colors"
-            title="Сохранить в файл"
+            title="Экспорт в JSON"
           >
             <Icon name="Download" size={20} />
           </button>
@@ -333,7 +394,7 @@ export default function Index() {
           <button
             onClick={() => fileInputRef.current?.click()}
             className="text-muted-foreground hover:text-primary transition-colors"
-            title="Загрузить из файла"
+            title="Импорт из JSON"
           >
             <Icon name="Upload" size={20} />
           </button>

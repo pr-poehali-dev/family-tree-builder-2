@@ -1,0 +1,29 @@
+{
+  "tests": [
+    {
+      "name": "Save new tree",
+      "method": "POST",
+      "body": {
+        "user_email": "test@example.com",
+        "title": "Test Family Tree",
+        "nodes": [
+          {
+            "id": "1",
+            "firstName": "Иван",
+            "lastName": "Иванов",
+            "gender": "male",
+            "x": 100,
+            "y": 100
+          }
+        ],
+        "edges": []
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "tree_id": "number",
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
