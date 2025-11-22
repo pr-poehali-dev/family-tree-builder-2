@@ -96,43 +96,25 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           <div className="relative h-[500px] flex items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-primary/20 rounded-[3rem] blur-2xl animate-pulse"></div>
             
-            <div className="relative w-full h-full bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-xl rounded-[3rem] overflow-hidden shadow-2xl border border-white/50 p-8">
-              <div className="relative z-10 h-full flex flex-col items-center justify-center">
-                <div className="relative mb-16">
-                  <div className="w-28 h-28 bg-gradient-to-br from-primary to-accent rounded-3xl shadow-2xl flex items-center justify-center border-4 border-white transform hover:scale-110 transition-transform cursor-pointer animate-float">
-                    <Icon name="User" size={48} className="text-white" />
+            <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/50">
+              <img 
+                src="https://cdn.poehali.dev/projects/154e461b-cfd7-4d9f-96c7-91ca810ff9e7/files/7bd479bf-b2ae-4e8d-a289-6cbca63ce983.jpg"
+                alt="Семья из трёх поколений создаёт семейное древо"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent"></div>
+              
+              <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Icon name="Users" size={20} className="text-primary" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white"></div>
+                  <div className="flex-1">
+                    <div className="font-bold text-foreground text-sm">Три поколения вместе</div>
+                    <div className="text-xs text-muted-foreground">Создают историю семьи</div>
+                  </div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 </div>
-
-                <div className="w-0.5 h-24 bg-gradient-to-b from-primary/60 to-transparent mb-8"></div>
-
-                <div className="flex gap-16 relative">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-12 w-48 h-0.5 bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
-                  
-                  <div className="transform hover:scale-110 transition-transform cursor-pointer animate-float" style={{ animationDelay: '0.5s' }}>
-                    <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl shadow-xl flex items-center justify-center border-4 border-white">
-                      <Icon name="User" size={32} className="text-white" />
-                    </div>
-                    <div className="mt-2 text-center">
-                      <div className="text-xs font-bold text-foreground">Отец</div>
-                    </div>
-                  </div>
-
-                  <div className="transform hover:scale-110 transition-transform cursor-pointer animate-float" style={{ animationDelay: '1s' }}>
-                    <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-pink-600 rounded-2xl shadow-xl flex items-center justify-center border-4 border-white">
-                      <Icon name="User" size={32} className="text-white" />
-                    </div>
-                    <div className="mt-2 text-center">
-                      <div className="text-xs font-bold text-foreground">Мать</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="absolute top-6 right-6 px-3 py-1.5 bg-white/90 backdrop-blur rounded-full shadow-lg border border-primary/20 flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-semibold text-foreground">3 персоны</span>
               </div>
             </div>
           </div>
@@ -179,6 +161,76 @@ export default function LandingPage({ onStart }: LandingPageProps) {
           </div>
         </div>
       </section>
+
+      <footer className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 border-t border-border/50">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="grid md:grid-cols-3 gap-12 mb-12">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-primary font-bold text-xl">
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                  <Icon name="Share2" className="text-white" size={20} />
+                </div>
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Семейные корни
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                Создавайте интерактивное генеалогическое древо и сохраняйте историю вашей семьи для будущих поколений.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-bold text-foreground">Навигация</h4>
+              <div className="space-y-2 text-sm">
+                <a href="#features" className="block text-muted-foreground hover:text-primary transition-colors">
+                  Возможности
+                </a>
+                <a href="#about" className="block text-muted-foreground hover:text-primary transition-colors">
+                  О проекте
+                </a>
+                <button onClick={onStart} className="block text-muted-foreground hover:text-primary transition-colors">
+                  Начать работу
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-bold text-foreground">Контакты</h4>
+              <div className="space-y-3">
+                <a href="mailto:nikita.ryabykh@example.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Icon name="Mail" size={16} />
+                  nikita.ryabykh@example.com
+                </a>
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Icon name="Github" size={16} />
+                  GitHub
+                </a>
+                <a href="https://t.me" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Icon name="Send" size={16} />
+                  Telegram
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-border/50 pt-8">
+            <div className="text-center space-y-3">
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <div className="px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full border border-primary/20">
+                  <Icon name="Award" size={16} className="inline mr-2 text-primary" />
+                  <span className="font-semibold text-foreground">Конкурс "Студенческий стартап"</span>
+                </div>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Сайт разработан <span className="font-bold text-primary">Рябых Никитой</span> специально для конкурса <span className="font-semibold">Студенческий стартап</span>
+              </p>
+              <p className="text-muted-foreground text-xs">
+                © 2025 Семейные корни. Все права защищены.
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
