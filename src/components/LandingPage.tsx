@@ -197,13 +197,13 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             <div className="space-y-4">
               <h4 className="font-bold text-foreground">Контакты</h4>
               <div className="space-y-3">
-                <a href="mailto:nikita.ryabykh@example.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a href="mailto:rnb-dir@yandex.ru" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Icon name="Mail" size={16} />
-                  nikita.ryabykh@example.com
+                  rnb-dir@yandex.ru
                 </a>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                  <Icon name="Github" size={16} />
-                  GitHub
+                <a href="tel:+79173415731" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+                  <Icon name="Phone" size={16} />
+                  +7 (917) 341-57-31
                 </a>
                 <a href="https://t.me" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
                   <Icon name="Send" size={16} />
