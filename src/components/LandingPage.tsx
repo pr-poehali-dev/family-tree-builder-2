@@ -5,6 +5,7 @@ import HomePage from '@/components/HomePage';
 import LearningPage from '@/components/LearningPage';
 import ArchivesPage from '@/components/ArchivesPage';
 import SupportPage from '@/components/SupportPage';
+import AuthModal from '@/components/AuthModal';
 
 interface LandingPageProps {
   onStart: () => void;
@@ -12,6 +13,8 @@ interface LandingPageProps {
 
 export default function LandingPage({ onStart }: LandingPageProps) {
   const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support'>('home');
+  const [authModalOpen, setAuthModalOpen] = React.useState(false);
+  const [authMode, setAuthMode] = React.useState<'login' | 'register'>('login');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background overflow-y-auto">
@@ -43,10 +46,17 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             </button>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={onStart} className="border-primary/30 hover:border-primary hover:bg-primary/5">
+            <Button 
+              variant="outline" 
+              onClick={() => { setAuthMode('login'); setAuthModalOpen(true); }} 
+              className="border-primary/30 hover:border-primary hover:bg-primary/5"
+            >
               Войти
             </Button>
-            <Button onClick={onStart} className="shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all">
+            <Button 
+              onClick={() => { setAuthMode('register'); setAuthModalOpen(true); }} 
+              className="shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
+            >
               Зарегистрироваться
             </Button>
           </div>
@@ -57,6 +67,17 @@ export default function LandingPage({ onStart }: LandingPageProps) {
       {currentPage === 'learning' && <LearningPage />}
       {currentPage === 'archives' && <ArchivesPage />}
       {currentPage === 'support' && <SupportPage />}
+
+      <AuthModal
+        isOpen={authModalOpen}
+        mode={authMode}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={(sessionToken, userData) => {
+          setAuthModalOpen(false);
+          onStart();
+        }}
+        onSwitchMode={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+      />
     </div>
   );
 }
