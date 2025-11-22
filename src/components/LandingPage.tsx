@@ -98,24 +98,11 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             
             <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/50">
               <img 
-                src="https://cdn.poehali.dev/projects/154e461b-cfd7-4d9f-96c7-91ca810ff9e7/files/7bd479bf-b2ae-4e8d-a289-6cbca63ce983.jpg"
+                src="https://cdn.poehali.dev/projects/154e461b-cfd7-4d9f-96c7-91ca810ff9e7/files/3056b5be-4075-4e11-ae73-20847d5480db.jpg"
                 alt="Семья из трёх поколений создаёт семейное древо"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent"></div>
-              
-              <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-white/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Icon name="Users" size={20} className="text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-bold text-foreground text-sm">Три поколения вместе</div>
-                    <div className="text-xs text-muted-foreground">Создают историю семьи</div>
-                  </div>
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                </div>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
             </div>
           </div>
         </div>
