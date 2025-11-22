@@ -37,7 +37,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
         
-        <div className="max-w-7xl mx-auto grid md:grid-cols-[1fr,1.1fr] gap-12 lg:gap-20 items-center relative z-10">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[0.9fr,1.3fr] gap-8 lg:gap-16 items-center relative z-10">
           <div className="space-y-7">
             <div className="inline-block">
               <div className="px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full text-primary text-sm font-semibold border border-primary/20">
@@ -93,17 +93,20 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             </div>
           </div>
 
-          <div className="relative h-[450px] md:h-[550px] flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-accent/15 to-primary/15 rounded-[2.5rem] blur-3xl opacity-60"></div>
+          <div className="relative h-[450px] md:h-[550px] flex items-center justify-center -mr-6 md:mr-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-accent/15 to-primary/15 blur-3xl opacity-60"></div>
             
-            <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl border-[6px] border-white/60">
+            <div className="relative w-full h-full overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 backdrop-blur-3xl"></div>
               <img 
                 src="https://cdn.poehali.dev/projects/154e461b-cfd7-4d9f-96c7-91ca810ff9e7/files/9de6bb42-8f27-4563-bac8-f444f4bf7c69.jpg"
                 alt="Семья из трёх поколений создаёт семейное древо"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-center rounded-3xl shadow-2xl"
+                style={{
+                  maskImage: 'radial-gradient(ellipse 100% 100% at center, black 60%, transparent 100%)',
+                  WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at center, black 60%, transparent 100%)'
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/5"></div>
-              <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-[2.5rem]"></div>
             </div>
           </div>
         </div>
