@@ -105,10 +105,6 @@ export function useTreeData(currentView: string) {
     localStorage.setItem('familyTree_nodes', JSON.stringify(nodes));
     localStorage.setItem('familyTree_edges', JSON.stringify(edges));
     
-    if (autoSaveTimer) {
-      clearTimeout(autoSaveTimer);
-    }
-    
     const timer = setTimeout(() => {
       if (nodes.length > 1 && currentView === 'tree') {
         saveTreeToDatabase();
@@ -120,7 +116,7 @@ export function useTreeData(currentView: string) {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [nodes, edges, currentView, saveTreeToDatabase, autoSaveTimer]);
+  }, [nodes, edges, currentView, saveTreeToDatabase]);
 
   const addRelative = (sourceId: string, type: string) => {
     const sourceNode = nodes.find((n) => n.id === sourceId);

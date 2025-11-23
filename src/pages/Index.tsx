@@ -17,17 +17,17 @@ export default function Index() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = React.useCallback(() => {
     localStorage.removeItem('session_token');
     localStorage.removeItem('user_data');
     localStorage.removeItem('last_view');
     localStorage.removeItem('last_activity');
     setCurrentView('landing');
-  };
+  }, []);
 
-  const updateActivity = () => {
+  const updateActivity = React.useCallback(() => {
     localStorage.setItem('last_activity', Date.now().toString());
-  };
+  }, []);
 
   useEffect(() => {
     const sessionTokenData = localStorage.getItem('session_token');
@@ -65,7 +65,7 @@ export default function Index() {
     }
     
     setIsAuthChecked(true);
-  }, []);
+  }, [handleLogout, updateActivity]);
 
   useEffect(() => {
     if (currentView === 'landing' || currentView === 'onboarding') return;
@@ -96,7 +96,7 @@ export default function Index() {
       });
       clearInterval(checkInactivity);
     };
-  }, [currentView]);
+  }, [currentView, updateActivity, handleLogout]);
 
   useEffect(() => {
     if (currentView === 'tree' || currentView === 'dashboard') {
