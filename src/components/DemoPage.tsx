@@ -147,9 +147,9 @@ export default function DemoPage({ onClose }: DemoPageProps) {
   const [selectedPerson, setSelectedPerson] = React.useState<Person | null>(null);
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-b from-background via-primary/5 to-background z-50 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background pt-20">
       <div className="min-h-screen pb-24">
-        <header className="sticky top-0 bg-white/90 backdrop-blur-lg z-40 border-b border-border/50 shadow-sm">
+        <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-50 border-b border-border/50 shadow-sm">
           <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button

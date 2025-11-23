@@ -20,8 +20,9 @@ export default function LandingPage({ onStart }: LandingPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background overflow-y-auto">
-      <header className="fixed w-full bg-white/90 backdrop-blur-lg z-50 border-b border-border/50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      {currentPage !== 'demo' && (
+        <header className="fixed w-full bg-white/90 backdrop-blur-lg z-50 border-b border-border/50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3 text-primary font-bold text-2xl">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
               <Icon name="Share2" className="text-white" size={20} />
@@ -65,8 +66,9 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               Зарегистрироваться
             </Button>
           </div>
-        </div>
-      </header>
+          </div>
+        </header>
+      )}
 
       {currentPage === 'home' && <HomePage onStart={onStart} onDemo={() => setCurrentPage('demo')} />}
       {currentPage === 'pricing' && <PricingPage onStart={onStart} />}
