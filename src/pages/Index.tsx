@@ -292,20 +292,28 @@ export default function Index() {
         />
 
         {mode === 'canvas' && (
-          <div
-            className={`fixed md:relative inset-y-0 right-0 w-80 md:w-96 bg-white shadow-2xl md:shadow-xl border-l border-border flex flex-col transition-transform duration-300 z-40 transform ${
-              selectedId ? 'translate-x-0' : 'translate-x-full md:mr-[-24rem]'
-            }`}
-          >
-            <PersonInspector
-              selectedNode={selectedNode || null}
-              parents={parents}
-              onClose={() => setSelectedId(null)}
-              onUpdateNode={updateSelectedNode}
-              onSelectNode={setSelectedId}
-              onDeleteNode={deleteNode}
-            />
-          </div>
+          <>
+            {selectedId && (
+              <div 
+                className="fixed inset-0 bg-black/20 z-30 md:hidden"
+                onClick={() => setSelectedId(null)}
+              />
+            )}
+            <div
+              className={`fixed md:relative inset-y-0 right-0 w-80 md:w-96 bg-white shadow-2xl md:shadow-xl border-l border-border flex flex-col transition-transform duration-300 z-40 transform ${
+                selectedId ? 'translate-x-0' : 'translate-x-full md:mr-[-24rem]'
+              }`}
+            >
+              <PersonInspector
+                selectedNode={selectedNode || null}
+                parents={parents}
+                onClose={() => setSelectedId(null)}
+                onUpdateNode={updateSelectedNode}
+                onSelectNode={setSelectedId}
+                onDeleteNode={deleteNode}
+              />
+            </div>
+          </>
         )}
       </div>
     </div>

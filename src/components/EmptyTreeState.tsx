@@ -28,7 +28,7 @@ export default function EmptyTreeState({ onClose }: EmptyTreeStateProps) {
           </h3>
           
           <p className="text-sm text-muted-foreground mb-4">
-            Кликните на карточку, чтобы добавить родственников
+            Наведите на карточку и нажмите кнопку <span className="font-bold">+</span> внизу
           </p>
           
           <div className="space-y-2 text-left">

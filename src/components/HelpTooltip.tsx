@@ -42,6 +42,10 @@ export default function HelpTooltip() {
                 <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">Ctrl+D</kbd>
               </div>
               <div className="flex items-center justify-between py-1">
+                <span className="text-muted-foreground">Удалить персону</span>
+                <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">Del</kbd>
+              </div>
+              <div className="flex items-center justify-between py-1">
                 <span className="text-muted-foreground">Закрыть панель</span>
                 <kbd className="px-2 py-1 bg-muted rounded text-xs font-mono">Esc</kbd>
               </div>

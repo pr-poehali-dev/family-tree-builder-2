@@ -122,12 +122,12 @@ export function useTreeData(currentView: string) {
     const sourceNode = nodes.find((n) => n.id === sourceId);
     if (!sourceNode) return;
 
-    if (type === 'parent') {
-      const existingParents = edges
-        .filter((e) => e.target === sourceId && e.type !== 'spouse')
-        .map((e) => nodes.find((n) => n.id === e.source))
-        .filter(Boolean) as FamilyNode[];
+    const existingParents = edges
+      .filter((e) => e.target === sourceId && e.type !== 'spouse')
+      .map((e) => nodes.find((n) => n.id === e.source))
+      .filter(Boolean) as FamilyNode[];
 
+    if (type === 'parent') {
       if (existingParents.length >= 2) {
         alert('У этого человека уже есть два родителя!');
         return;
@@ -148,11 +148,6 @@ export function useTreeData(currentView: string) {
     const newLastName = sourceNode.lastName;
 
     if (type === 'parent') {
-      const existingParents = edges
-        .filter((e) => e.target === sourceId && e.type !== 'spouse')
-        .map((e) => nodes.find((n) => n.id === e.source))
-        .filter(Boolean) as FamilyNode[];
-
       if (existingParents.length === 0) {
         newX -= 110;
         newY -= 180;
@@ -162,13 +157,19 @@ export function useTreeData(currentView: string) {
         newY = firstParent.y;
       }
     } else if (type === 'child') {
-      const childrenOfSource = edges
-        .filter((e) => e.source === sourceId && e.type !== 'spouse')
+      const spouseEdges = edges.filter((e) => e.type === 'spouse' && (e.source === sourceId || e.target === sourceId));
+      const spouseIds = spouseEdges.map((e) => e.source === sourceId ? e.target : e.source);
+      
+      const allChildrenEdges = edges.filter((e) => 
+        e.type !== 'spouse' && (e.source === sourceId || spouseIds.includes(e.source))
+      );
+      
+      const childrenOfFamily = allChildrenEdges
         .map((e) => nodes.find((n) => n.id === e.target))
         .filter(Boolean) as FamilyNode[];
 
-      if (childrenOfSource.length > 0) {
-        const rightmostChild = childrenOfSource.reduce((max, child) => 
+      if (childrenOfFamily.length > 0) {
+        const rightmostChild = childrenOfFamily.reduce((max, child) => 
           child.x > max.x ? child : max
         );
         newX = rightmostChild.x + 220;
@@ -246,21 +247,32 @@ export function useTreeData(currentView: string) {
       }
     } else if (type === 'spouse') {
       newEdgesList.push({ id: `e-spouse-${Date.now()}-${Math.random()}`, source: sourceId, target: newId, type: 'spouse' });
-    } else {
+    } else if (type === 'child') {
       newEdgesList.push({
         id: `e-${Date.now()}-${Math.random()}`,
-        source: type === 'child' ? sourceId : newId,
-        target: type === 'child' ? newId : sourceId
+        source: sourceId,
+        target: newId
       });
 
-      if (type === 'parent') {
-        const otherParents = edges
-          .filter((e) => e.target === sourceId && e.type !== 'spouse')
-          .map((e) => e.source);
-        if (otherParents.length > 0) {
-          const spouseId = otherParents[0];
-          newEdgesList.push({ id: `e-spouse-${Date.now()}-${Math.random()}`, source: spouseId, target: newId, type: 'spouse' });
-        }
+      const spouseEdges = edges.filter((e) => e.type === 'spouse' && (e.source === sourceId || e.target === sourceId));
+      if (spouseEdges.length > 0) {
+        const spouseId = spouseEdges[0].source === sourceId ? spouseEdges[0].target : spouseEdges[0].source;
+        newEdgesList.push({
+          id: `e-${Date.now()}-${Math.random()}-spouse`,
+          source: spouseId,
+          target: newId
+        });
+      }
+    } else if (type === 'parent') {
+      newEdgesList.push({
+        id: `e-${Date.now()}-${Math.random()}`,
+        source: newId,
+        target: sourceId
+      });
+
+      if (existingParents.length > 0) {
+        const spouseId = existingParents[0].id;
+        newEdgesList.push({ id: `e-spouse-${Date.now()}-${Math.random()}`, source: spouseId, target: newId, type: 'spouse' });
       }
     }
 

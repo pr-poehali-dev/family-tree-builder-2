@@ -237,7 +237,7 @@ export default function TreeCanvas({
                           </button>
 
                           {menuOpen && (
-                            <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-white rounded-md shadow-xl border border-border overflow-hidden min-w-[120px] z-30">
+                            <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-white rounded-md shadow-2xl border-2 border-primary/20 overflow-hidden min-w-[120px] z-30">
                               <div className="grid grid-cols-2 gap-px bg-border">
                                 {node.gender === 'male' && (
                                   <button
