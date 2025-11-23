@@ -17,9 +17,9 @@ export default function DashboardOverviewTab({ stats, recentActivity, nodes = []
   const recommendations = getRecommendations(nodes, edges);
   const { complete, partial, minimal } = getProfileCompleteness(nodes);
   
-  const weeklyPeopleChange = (stats as any).weeklyPeopleChange || 0;
-  const weeklyPhotosChange = (stats as any).weeklyPhotosChange || 0;
-  const weeklyStoriesChange = (stats as any).weeklyStoriesChange || 0;
+  const weeklyPeopleChange = stats.weeklyPeopleChange || 0;
+  const weeklyPhotosChange = stats.weeklyPhotosChange || 0;
+  const weeklyStoriesChange = stats.weeklyStoriesChange || 0;
   
   return (
     <div className="space-y-8">

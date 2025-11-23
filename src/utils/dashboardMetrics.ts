@@ -1,11 +1,7 @@
 import { FamilyNode, Edge } from '@/components/TreeCanvas';
 import { Stats, Achievement, RecentActivity } from '@/data/dashboardMockData';
 
-export function calculateStats(nodes: FamilyNode[]): Stats & { 
-  weeklyPeopleChange: number;
-  weeklyPhotosChange: number;
-  weeklyStoriesChange: number;
-} {
+export function calculateStats(nodes: FamilyNode[]): Stats {
   const totalPeople = nodes.length;
   
   const photosAdded = nodes.filter(node => node.bio && node.bio.includes('фото')).length;

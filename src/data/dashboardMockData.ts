@@ -16,6 +16,9 @@ export interface Stats {
   storiesWritten: number;
   documentsUploaded: number;
   completionPercentage: number;
+  weeklyPeopleChange?: number;
+  weeklyPhotosChange?: number;
+  weeklyStoriesChange?: number;
 }
 
 export interface RecentActivity {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { FamilyNode, Edge } from '@/components/TreeCanvas';
 
 const INITIAL_NODES: FamilyNode[] = [
@@ -84,9 +84,9 @@ export function useTreeData(currentView: string) {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [nodes, edges, currentView]);
+  }, [nodes, edges, currentView, saveTreeToDatabase, autoSaveTimer]);
 
-  const saveTreeToDatabase = async () => {
+  const saveTreeToDatabase = useCallback(async () => {
     setIsSaving(true);
     try {
       const response = await fetch(API_URLS.saveTree, {
@@ -120,7 +120,7 @@ export function useTreeData(currentView: string) {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [currentTreeId, userEmail, nodes, edges]);
 
   const addRelative = (sourceId: string, type: string) => {
     const sourceNode = nodes.find((n) => n.id === sourceId);
