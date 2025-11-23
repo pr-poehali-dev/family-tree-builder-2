@@ -146,7 +146,7 @@ export default function Index() {
     handleOnboardingNext
   } = useOnboarding(nodes, setNodes, setEdges, setCurrentView);
 
-  useKeyboardShortcuts(selectedId, setSelectedId, saveTreeToDatabase, setCurrentView);
+  useKeyboardShortcuts(selectedId, setSelectedId, saveTreeToDatabase, setCurrentView, deleteNode);
 
   const handleStart = () => setCurrentView('onboarding');
 

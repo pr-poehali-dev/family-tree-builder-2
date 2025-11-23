@@ -222,6 +222,8 @@ export default function TreeCanvas({
                         <div 
                           className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                           onClick={(e) => e.stopPropagation()}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onMouseUp={(e) => e.stopPropagation()}
                         >
                           <button
                             title="Добавить родственника"
