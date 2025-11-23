@@ -41,6 +41,42 @@ export function useTreeData(currentView: string) {
   const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const saveTreeToDatabase = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(API_URLS.saveTree, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Email': userEmail
+        },
+        body: JSON.stringify({
+          tree_id: currentTreeId,
+          user_email: userEmail,
+          title: 'Моё семейное древо',
+          nodes,
+          edges
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setCurrentTreeId(data.tree_id);
+        localStorage.setItem('familyTree_treeId', data.tree_id.toString());
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 3000);
+      } else {
+        alert('Ошибка сохранения: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error saving tree:', error);
+      alert('Ошибка при сохранении древа');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [currentTreeId, userEmail, nodes, edges]);
+
   useEffect(() => {
     const savedNodes = localStorage.getItem('familyTree_nodes');
     const savedEdges = localStorage.getItem('familyTree_edges');
@@ -85,42 +121,6 @@ export function useTreeData(currentView: string) {
       if (timer) clearTimeout(timer);
     };
   }, [nodes, edges, currentView, saveTreeToDatabase, autoSaveTimer]);
-
-  const saveTreeToDatabase = useCallback(async () => {
-    setIsSaving(true);
-    try {
-      const response = await fetch(API_URLS.saveTree, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Email': userEmail
-        },
-        body: JSON.stringify({
-          tree_id: currentTreeId,
-          user_email: userEmail,
-          title: 'Моё семейное древо',
-          nodes,
-          edges
-        })
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setCurrentTreeId(data.tree_id);
-        localStorage.setItem('familyTree_treeId', data.tree_id.toString());
-        setShowSuccessToast(true);
-        setTimeout(() => setShowSuccessToast(false), 3000);
-      } else {
-        alert('Ошибка сохранения: ' + data.error);
-      }
-    } catch (error) {
-      console.error('Error saving tree:', error);
-      alert('Ошибка при сохранении древа');
-    } finally {
-      setIsSaving(false);
-    }
-  }, [currentTreeId, userEmail, nodes, edges]);
 
   const addRelative = (sourceId: string, type: string) => {
     const sourceNode = nodes.find((n) => n.id === sourceId);
