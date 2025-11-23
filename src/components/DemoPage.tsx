@@ -1,418 +1,802 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import TreeCanvas, { FamilyNode, Edge } from '@/components/TreeCanvas';
+import PersonInspector from '@/components/PersonInspector';
 
 interface DemoPageProps {
   onClose: () => void;
 }
 
-interface Person {
-  id: string;
-  name: string;
-  years: string;
-  title: string;
-  photo: string;
-  spouse?: string;
-  children?: string[];
-  parents?: string[];
-}
-
-const romanovDynasty: Record<string, Person> = {
-  'mikhail': {
+const DEMO_NODES: FamilyNode[] = [
+  {
     id: 'mikhail',
-    name: 'Михаил I Фёдорович',
-    years: '1596-1645',
-    title: 'Царь всея Руси (1613-1645)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Mikhail_I_of_Russia_%281596-1645%29.jpg/220px-Mikhail_I_of_Russia_%281596-1645%29.jpg',
-    children: ['alexey']
+    x: 400,
+    y: 100,
+    firstName: 'Михаил',
+    lastName: 'Романов',
+    middleName: 'Фёдорович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '12.07.1596',
+    birthPlace: 'Москва, Русское царство',
+    deathDate: '13.07.1645',
+    deathPlace: 'Москва, Русское царство',
+    occupation: 'Царь всея Руси',
+    isAlive: false,
+    relation: 'Основатель династии',
+    bio: 'Первый русский царь из династии Романовых. Избран на царство Земским собором в 1613 году в возрасте 16 лет.',
+    historyContext: 'Правил в период Смутного времени и восстановления русской государственности после польско-литовской интервенции.'
   },
-  'alexey': {
+  {
+    id: 'eudoxia-streshneva',
+    x: 600,
+    y: 100,
+    firstName: 'Евдокия',
+    lastName: 'Романова',
+    middleName: 'Лукьяновна',
+    maidenName: 'Стрешнева',
+    gender: 'female',
+    birthDate: '1608',
+    birthPlace: 'Москва',
+    deathDate: '18.08.1645',
+    deathPlace: 'Москва',
+    occupation: 'Царица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Вторая жена Михаила Фёдоровича, мать царя Алексея Михайловича.',
+    historyContext: 'Была выбрана царём из 60 невест на смотринах 1626 года.'
+  },
+  {
     id: 'alexey',
-    name: 'Алексей Михайлович',
-    years: '1629-1676',
-    title: 'Царь всея Руси (1645-1676)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Aleksey_Mikhailovich_of_Russia.jpg/220px-Aleksey_Mikhailovich_of_Russia.jpg',
-    parents: ['mikhail'],
-    children: ['fyodor', 'peter1']
+    x: 500,
+    y: 280,
+    firstName: 'Алексей',
+    lastName: 'Романов',
+    middleName: 'Михайлович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '19.03.1629',
+    birthPlace: 'Москва',
+    deathDate: '29.01.1676',
+    deathPlace: 'Москва',
+    occupation: 'Царь всея Руси',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Второй русский царь из династии Романовых, прозванный "Тишайшим". Отец Петра I.',
+    historyContext: 'При нём произошёл церковный раскол, присоединена Левобережная Украина, принято Соборное уложение 1649 года.'
   },
-  'fyodor': {
-    id: 'fyodor',
-    name: 'Фёдор III Алексеевич',
-    years: '1661-1682',
-    title: 'Царь всея Руси (1676-1682)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Fyodor_III_of_Russia_%28Dormition_Cathedral%29.jpg/220px-Fyodor_III_of_Russia_%28Dormition_Cathedral%29.jpg',
-    parents: ['alexey']
+  {
+    id: 'maria-miloslavskaya',
+    x: 320,
+    y: 280,
+    firstName: 'Мария',
+    lastName: 'Романова',
+    middleName: 'Ильинична',
+    maidenName: 'Милославская',
+    gender: 'female',
+    birthDate: '01.04.1624',
+    birthPlace: 'Москва',
+    deathDate: '03.03.1669',
+    deathPlace: 'Москва',
+    occupation: 'Царица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Первая жена Алексея Михайловича, мать 13 детей, включая царя Фёдора III.',
+    historyContext: 'Представительница боярского рода Милославских.'
   },
-  'peter1': {
+  {
+    id: 'natalya-naryshkina',
+    x: 680,
+    y: 280,
+    firstName: 'Наталья',
+    lastName: 'Романова',
+    middleName: 'Кирилловна',
+    maidenName: 'Нарышкина',
+    gender: 'female',
+    birthDate: '01.09.1651',
+    birthPlace: 'Москва',
+    deathDate: '25.01.1694',
+    deathPlace: 'Москва',
+    occupation: 'Царица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Вторая жена Алексея Михайловича, мать Петра I.',
+    historyContext: 'После смерти мужа участвовала в регентстве при малолетнем сыне.'
+  },
+  {
+    id: 'fyodor3',
+    x: 200,
+    y: 460,
+    firstName: 'Фёдор',
+    lastName: 'Романов',
+    middleName: 'Алексеевич',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '30.05.1661',
+    birthPlace: 'Москва',
+    deathDate: '27.04.1682',
+    deathPlace: 'Москва',
+    occupation: 'Царь всея Руси',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Третий русский царь из династии Романовых. Правил в 1676-1682 гг.',
+    historyContext: 'Болезненный царь, при котором усилилось влияние бояр Милославских.'
+  },
+  {
+    id: 'ivan5',
+    x: 380,
+    y: 460,
+    firstName: 'Иван',
+    lastName: 'Романов',
+    middleName: 'Алексеевич',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '27.08.1666',
+    birthPlace: 'Москва',
+    deathDate: '29.01.1696',
+    deathPlace: 'Москва',
+    occupation: 'Царь всея Руси',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Соправитель Петра I в 1682-1696 гг. Слабоумный и болезненный.',
+    historyContext: 'Номинальный царь, реальная власть принадлежала Софье и Петру.'
+  },
+  {
+    id: 'sophia',
+    x: 290,
+    y: 460,
+    firstName: 'Софья',
+    lastName: 'Романова',
+    middleName: 'Алексеевна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '17.09.1657',
+    birthPlace: 'Москва',
+    deathDate: '03.07.1704',
+    deathPlace: 'Новодевичий монастырь, Москва',
+    occupation: 'Правительница',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Регент при малолетних братьях Иване V и Петре I в 1682-1689 гг.',
+    historyContext: 'Первая женщина-правительница России. Свергнута Петром I.'
+  },
+  {
     id: 'peter1',
-    name: 'Пётр I Великий',
-    years: '1672-1725',
-    title: 'Император Всероссийский (1721-1725)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Peter_der-Grosse_1838.jpg/220px-Peter_der-Grosse_1838.jpg',
-    parents: ['alexey'],
-    children: ['anna', 'elizabeth']
+    x: 620,
+    y: 460,
+    firstName: 'Пётр',
+    lastName: 'Романов',
+    middleName: 'Алексеевич',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '30.05.1672',
+    birthPlace: 'Москва',
+    deathDate: '28.01.1725',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Император Всероссийский',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Пётр I Великий - первый российский император, реформатор, основатель Санкт-Петербурга.',
+    historyContext: 'Провёл масштабные реформы государства, создал регулярную армию и флот, выиграл Северную войну, прорубил "окно в Европу".'
   },
-  'anna': {
-    id: 'anna',
-    name: 'Анна Петровна',
-    years: '1708-1728',
-    title: 'Цесаревна',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Anna_Petrovna_by_L.Caravaque_%281725%2C_Hermitage%29.jpg/220px-Anna_Petrovna_by_L.Caravaque_%281725%2C_Hermitage%29.jpg',
-    parents: ['peter1'],
-    children: ['peter3']
+  {
+    id: 'eudoxia-lopukhina',
+    x: 460,
+    y: 460,
+    firstName: 'Евдокия',
+    lastName: 'Романова',
+    middleName: 'Фёдоровна',
+    maidenName: 'Лопухина',
+    gender: 'female',
+    birthDate: '30.07.1669',
+    birthPlace: 'Москва',
+    deathDate: '27.08.1731',
+    deathPlace: 'Москва',
+    occupation: 'Царица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Первая жена Петра I, мать царевича Алексея.',
+    historyContext: 'Пострижена в монахини в 1698 году по приказу Петра I.'
   },
-  'elizabeth': {
-    id: 'elizabeth',
-    name: 'Елизавета Петровна',
-    years: '1709-1762',
-    title: 'Императрица (1741-1762)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Elizabeth_of_Russia_by_Vigilius_Eriksen.jpg/220px-Elizabeth_of_Russia_by_Vigilius_Eriksen.jpg',
-    parents: ['peter1']
+  {
+    id: 'catherine1',
+    x: 780,
+    y: 460,
+    firstName: 'Екатерина',
+    lastName: 'Романова',
+    middleName: 'Алексеевна',
+    maidenName: 'Скавронская',
+    gender: 'female',
+    birthDate: '05.04.1684',
+    birthPlace: 'Лифляндия',
+    deathDate: '06.05.1727',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Вторая жена Петра I, после его смерти стала императрицей (1725-1727).',
+    historyContext: 'Первая женщина на российском престоле, коронованная как правящая императрица.'
   },
-  'peter3': {
+  {
+    id: 'alexey-petrovich',
+    x: 490,
+    y: 640,
+    firstName: 'Алексей',
+    lastName: 'Романов',
+    middleName: 'Петрович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '18.02.1690',
+    birthPlace: 'Москва',
+    deathDate: '26.06.1718',
+    deathPlace: 'Петропавловская крепость, Санкт-Петербург',
+    occupation: 'Царевич',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Сын Петра I и Евдокии Лопухиной, наследник престола.',
+    historyContext: 'Обвинён в заговоре против отца, умер под следствием в крепости.'
+  },
+  {
+    id: 'anna-petrovna',
+    x: 680,
+    y: 640,
+    firstName: 'Анна',
+    lastName: 'Романова',
+    middleName: 'Петровна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '27.01.1708',
+    birthPlace: 'Москва',
+    deathDate: '15.05.1728',
+    deathPlace: 'Киль, Голштиния',
+    occupation: 'Цесаревна',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Дочь Петра I и Екатерины I, герцогиня Голштинская, мать Петра III.',
+    historyContext: 'Её сын Пётр III стал императором России.'
+  },
+  {
+    id: 'elizabeth-petrovna',
+    x: 860,
+    y: 640,
+    firstName: 'Елизавета',
+    lastName: 'Романова',
+    middleName: 'Петровна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '18.12.1709',
+    birthPlace: 'Коломенское, Москва',
+    deathDate: '25.12.1761',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Дочь Петра I и Екатерины I, российская императрица (1741-1761).',
+    historyContext: 'Пришла к власти в результате дворцового переворота. Основала Московский университет.'
+  },
+  {
+    id: 'peter2',
+    x: 490,
+    y: 820,
+    firstName: 'Пётр',
+    lastName: 'Романов',
+    middleName: 'Алексеевич',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '12.10.1715',
+    birthPlace: 'Санкт-Петербург',
+    deathDate: '19.01.1730',
+    deathPlace: 'Москва',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Внук',
+    bio: 'Внук Петра I, император в 1727-1730 гг. Умер в 14 лет от оспы.',
+    historyContext: 'Последний представитель рода Романовых по прямой мужской линии.'
+  },
+  {
     id: 'peter3',
-    name: 'Пётр III Фёдорович',
-    years: '1728-1762',
-    title: 'Император (1762)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Peter_III_of_Russia_by_A.Antropov_%281762%2C_Tretyakov_gallery%29.jpg/220px-Peter_III_of_Russia_by_A.Antropov_%281762%2C_Tretyakov_gallery%29.jpg',
-    parents: ['anna'],
-    spouse: 'catherine2',
-    children: ['paul1']
+    x: 680,
+    y: 820,
+    firstName: 'Пётр',
+    lastName: 'Романов',
+    middleName: 'Фёдорович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '10.02.1728',
+    birthPlace: 'Киль, Голштиния',
+    deathDate: '06.07.1762',
+    deathPlace: 'Ропша, Санкт-Петербург',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Внук',
+    bio: 'Внук Петра I, российский император в 1762 г. (6 месяцев). Свергнут женой.',
+    historyContext: 'Убит при невыясненных обстоятельствах после дворцового переворота.'
   },
-  'catherine2': {
+  {
     id: 'catherine2',
-    name: 'Екатерина II Великая',
-    years: '1729-1796',
-    title: 'Императрица (1762-1796)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Catherine_II_by_F.Rokotov_after_Roslin_%281763%2C_Hermitage%29.jpg/220px-Catherine_II_by_F.Rokotov_after_Roslin_%281763%2C_Hermitage%29.jpg',
-    spouse: 'peter3',
-    children: ['paul1']
+    x: 860,
+    y: 820,
+    firstName: 'Екатерина',
+    lastName: 'Романова',
+    middleName: 'Алексеевна',
+    maidenName: 'Ангальт-Цербстская',
+    gender: 'female',
+    birthDate: '21.04.1729',
+    birthPlace: 'Штеттин, Пруссия',
+    deathDate: '06.11.1796',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Екатерина II Великая - одна из величайших правительниц России (1762-1796).',
+    historyContext: 'Эпоха просвещённого абсолютизма, расширение границ империи, золотой век дворянства.'
   },
-  'paul1': {
+  {
     id: 'paul1',
-    name: 'Павел I Петрович',
-    years: '1754-1801',
-    title: 'Император (1796-1801)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Paul_I_of_Russia_by_S.Shchukin_%281797%2C_Pavlovsk%29.jpg/220px-Paul_I_of_Russia_by_S.Shchukin_%281797%2C_Pavlovsk%29.jpg',
-    parents: ['peter3', 'catherine2'],
-    children: ['alexander1', 'nicholas1']
+    x: 770,
+    y: 1000,
+    firstName: 'Павел',
+    lastName: 'Романов',
+    middleName: 'Петрович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '20.09.1754',
+    birthPlace: 'Санкт-Петербург',
+    deathDate: '11.03.1801',
+    deathPlace: 'Михайловский замок, Санкт-Петербург',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Сын Петра III и Екатерины II, российский император (1796-1801).',
+    historyContext: 'Убит в результате заговора гвардейских офицеров в Михайловском замке.'
   },
-  'alexander1': {
+  {
+    id: 'maria-feodorovna',
+    x: 920,
+    y: 1000,
+    firstName: 'Мария',
+    lastName: 'Романова',
+    middleName: 'Фёдоровна',
+    maidenName: 'Вюртембергская',
+    gender: 'female',
+    birthDate: '14.10.1759',
+    birthPlace: 'Штеттин, Пруссия',
+    deathDate: '24.10.1828',
+    deathPlace: 'Павловск',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Жена Павла I, мать императоров Александра I и Николая I.',
+    historyContext: 'Основала благотворительные учреждения, Мариинские больницы и институты.'
+  },
+  {
     id: 'alexander1',
-    name: 'Александр I Павлович',
-    years: '1777-1825',
-    title: 'Император (1801-1825)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Alexander_I_of_Russia_by_G.Dawe_%281826%2C_Peterhof%29.jpg/220px-Alexander_I_of_Russia_by_G.Dawe_%281826%2C_Peterhof%29.jpg',
-    parents: ['paul1']
+    x: 620,
+    y: 1180,
+    firstName: 'Александр',
+    lastName: 'Романов',
+    middleName: 'Павлович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '12.12.1777',
+    birthPlace: 'Санкт-Петербург',
+    deathDate: '19.11.1825',
+    deathPlace: 'Таганрог',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Александр I Благословенный, российский император (1801-1825). Победитель Наполеона.',
+    historyContext: 'Отечественная война 1812 года, создание Священного союза, эпоха либеральных начинаний.'
   },
-  'nicholas1': {
+  {
+    id: 'constantine',
+    x: 770,
+    y: 1180,
+    firstName: 'Константин',
+    lastName: 'Романов',
+    middleName: 'Павлович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '27.04.1779',
+    birthPlace: 'Царское Село',
+    deathDate: '15.06.1831',
+    deathPlace: 'Витебск',
+    occupation: 'Великий князь',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Второй сын Павла I, наместник Царства Польского.',
+    historyContext: 'Отказался от престола после смерти Александра I, что вызвало восстание декабристов.'
+  },
+  {
     id: 'nicholas1',
-    name: 'Николай I Павлович',
-    years: '1796-1855',
-    title: 'Император (1825-1855)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Franz_Kr%C3%BCger_-_Portrait_of_Emperor_Nicholas_I_-_WGA12289.jpg/220px-Franz_Kr%C3%BCger_-_Portrait_of_Emperor_Nicholas_I_-_WGA12289.jpg',
-    parents: ['paul1'],
-    children: ['alexander2']
+    x: 920,
+    y: 1180,
+    firstName: 'Николай',
+    lastName: 'Романов',
+    middleName: 'Павлович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '25.06.1796',
+    birthPlace: 'Царское Село',
+    deathDate: '18.02.1855',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Николай I, российский император (1825-1855). Прозван "Палкиным".',
+    historyContext: 'Подавил восстание декабристов, эпоха реакции, Крымская война.'
   },
-  'alexander2': {
+  {
+    id: 'alexandra-feodorovna1',
+    x: 1070,
+    y: 1180,
+    firstName: 'Александра',
+    lastName: 'Романова',
+    middleName: 'Фёдоровна',
+    maidenName: 'Прусская',
+    gender: 'female',
+    birthDate: '01.07.1798',
+    birthPlace: 'Берлин',
+    deathDate: '20.10.1860',
+    deathPlace: 'Царское Село',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Жена Николая I, принцесса Шарлотта Прусская.',
+    historyContext: 'Мать семерых детей, включая Александра II.'
+  },
+  {
     id: 'alexander2',
-    name: 'Александр II Николаевич',
-    years: '1818-1881',
-    title: 'Император-Освободитель (1855-1881)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Alexander_II_of_Russia_photo.jpg/220px-Alexander_II_of_Russia_photo.jpg',
-    parents: ['nicholas1'],
-    children: ['alexander3']
+    x: 920,
+    y: 1360,
+    firstName: 'Александр',
+    lastName: 'Романов',
+    middleName: 'Николаевич',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '17.04.1818',
+    birthPlace: 'Москва',
+    deathDate: '01.03.1881',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Александр II Освободитель, российский император (1855-1881). Отменил крепостное право.',
+    historyContext: 'Великие реформы 1860-70-х годов, убит народовольцами на набережной Екатерининского канала.'
   },
-  'alexander3': {
+  {
+    id: 'maria-alexandrovna',
+    x: 1070,
+    y: 1360,
+    firstName: 'Мария',
+    lastName: 'Романова',
+    middleName: 'Александровна',
+    maidenName: 'Гессенская',
+    gender: 'female',
+    birthDate: '27.07.1824',
+    birthPlace: 'Дармштадт',
+    deathDate: '22.05.1880',
+    deathPlace: 'Санкт-Петербург',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Жена Александра II, принцесса Максимилиана Гессенская.',
+    historyContext: 'Мать восьмерых детей, занималась благотворительностью.'
+  },
+  {
     id: 'alexander3',
-    name: 'Александр III Александрович',
-    years: '1845-1894',
-    title: 'Император-Миротворец (1881-1894)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Alexander_III_of_Russia.jpg/220px-Alexander_III_of_Russia.jpg',
-    parents: ['alexander2'],
-    children: ['nicholas2']
+    x: 920,
+    y: 1540,
+    firstName: 'Александр',
+    lastName: 'Романов',
+    middleName: 'Александрович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '26.02.1845',
+    birthPlace: 'Санкт-Петербург',
+    deathDate: '20.10.1894',
+    deathPlace: 'Ливадия, Крым',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Александр III Миротворец, российский император (1881-1894). За правление не вёл войн.',
+    historyContext: 'Период контрреформ, укрепление самодержавия, промышленное развитие.'
   },
-  'nicholas2': {
+  {
+    id: 'maria-feodorovna2',
+    x: 1070,
+    y: 1540,
+    firstName: 'Мария',
+    lastName: 'Романова',
+    middleName: 'Фёдоровна',
+    maidenName: 'Датская',
+    gender: 'female',
+    birthDate: '14.11.1847',
+    birthPlace: 'Копенгаген',
+    deathDate: '13.10.1928',
+    deathPlace: 'Видёре, Дания',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Жена Александра III, принцесса Дагмара Датская. Мать Николая II.',
+    historyContext: 'После революции эмигрировала в Данию, отказывалась верить в гибель семьи сына.'
+  },
+  {
     id: 'nicholas2',
-    name: 'Николай II Александрович',
-    years: '1868-1918',
-    title: 'Последний Император (1894-1917)',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Tsar_Nicholas_II_-1898.jpg/220px-Tsar_Nicholas_II_-1898.jpg',
-    parents: ['alexander3']
+    x: 920,
+    y: 1720,
+    firstName: 'Николай',
+    lastName: 'Романов',
+    middleName: 'Александрович',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '06.05.1868',
+    birthPlace: 'Царское Село',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Император',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Николай II, последний российский император (1894-1917). Расстрелян большевиками.',
+    historyContext: 'Русско-японская война, революция 1905 года, Первая мировая война, отречение от престола, расстрел в Ипатьевском доме.'
+  },
+  {
+    id: 'alexandra-feodorovna2',
+    x: 1070,
+    y: 1720,
+    firstName: 'Александра',
+    lastName: 'Романова',
+    middleName: 'Фёдоровна',
+    maidenName: 'Гессенская',
+    gender: 'female',
+    birthDate: '25.05.1872',
+    birthPlace: 'Дармштадт',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Императрица',
+    isAlive: false,
+    relation: 'Супруга',
+    bio: 'Жена Николая II, принцесса Алиса Гессенская. Расстреляна вместе с семьёй.',
+    historyContext: 'Находилась под влиянием Распутина, канонизирована Русской православной церковью.'
+  },
+  {
+    id: 'olga-nikolaevna',
+    x: 720,
+    y: 1900,
+    firstName: 'Ольга',
+    lastName: 'Романова',
+    middleName: 'Николаевна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '03.11.1895',
+    birthPlace: 'Царское Село',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Великая княжна',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Старшая дочь Николая II. Расстреляна в 22 года вместе с семьёй.',
+    historyContext: 'Во время Первой мировой войны работала сестрой милосердия.'
+  },
+  {
+    id: 'tatiana-nikolaevna',
+    x: 840,
+    y: 1900,
+    firstName: 'Татьяна',
+    lastName: 'Романова',
+    middleName: 'Николаевна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '29.05.1897',
+    birthPlace: 'Петергоф',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Великая княжна',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Вторая дочь Николая II. Расстреляна в 21 год.',
+    historyContext: 'Считалась самой красивой из сестёр, помощница матери.'
+  },
+  {
+    id: 'maria-nikolaevna',
+    x: 960,
+    y: 1900,
+    firstName: 'Мария',
+    lastName: 'Романова',
+    middleName: 'Николаевна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '14.06.1899',
+    birthPlace: 'Петергоф',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Великая княжна',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Третья дочь Николая II. Расстреляна в 19 лет.',
+    historyContext: 'Была доброй и весёлой, любила общаться с солдатами.'
+  },
+  {
+    id: 'anastasia-nikolaevna',
+    x: 1080,
+    y: 1900,
+    firstName: 'Анастасия',
+    lastName: 'Романова',
+    middleName: 'Николаевна',
+    maidenName: '',
+    gender: 'female',
+    birthDate: '05.06.1901',
+    birthPlace: 'Петергоф',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Великая княжна',
+    isAlive: false,
+    relation: 'Дочь',
+    bio: 'Младшая дочь Николая II. Расстреляна в 17 лет.',
+    historyContext: 'Озорная и энергичная девочка. После революции появились самозванки, выдававшие себя за неё.'
+  },
+  {
+    id: 'alexey-nikolaevich',
+    x: 1200,
+    y: 1900,
+    firstName: 'Алексей',
+    lastName: 'Романов',
+    middleName: 'Николаевич',
+    maidenName: '',
+    gender: 'male',
+    birthDate: '30.07.1904',
+    birthPlace: 'Петергоф',
+    deathDate: '17.07.1918',
+    deathPlace: 'Екатеринбург',
+    occupation: 'Цесаревич',
+    isAlive: false,
+    relation: 'Сын',
+    bio: 'Наследник российского престола, единственный сын Николая II. Расстрелян в 13 лет.',
+    historyContext: 'Страдал гемофилией, что повлияло на политическую ситуацию в стране через влияние Распутина.'
   }
-};
+];
+
+const DEMO_EDGES: Edge[] = [
+  { id: 'e-mikhail-eudoxia', source: 'mikhail', target: 'eudoxia-streshneva', type: 'spouse' },
+  { id: 'e-mikhail-alexey', source: 'mikhail', target: 'alexey' },
+  { id: 'e-alexey-maria', source: 'alexey', target: 'maria-miloslavskaya', type: 'spouse' },
+  { id: 'e-alexey-natalya', source: 'alexey', target: 'natalya-naryshkina', type: 'spouse' },
+  { id: 'e-alexey-fyodor', source: 'alexey', target: 'fyodor3' },
+  { id: 'e-alexey-ivan', source: 'alexey', target: 'ivan5' },
+  { id: 'e-alexey-sophia', source: 'alexey', target: 'sophia' },
+  { id: 'e-alexey-peter', source: 'alexey', target: 'peter1' },
+  { id: 'e-peter-eudoxia', source: 'peter1', target: 'eudoxia-lopukhina', type: 'spouse' },
+  { id: 'e-peter-catherine', source: 'peter1', target: 'catherine1', type: 'spouse' },
+  { id: 'e-peter-alexeyp', source: 'peter1', target: 'alexey-petrovich' },
+  { id: 'e-peter-anna', source: 'peter1', target: 'anna-petrovna' },
+  { id: 'e-peter-elizabeth', source: 'peter1', target: 'elizabeth-petrovna' },
+  { id: 'e-alexeyp-peter2', source: 'alexey-petrovich', target: 'peter2' },
+  { id: 'e-anna-peter3', source: 'anna-petrovna', target: 'peter3' },
+  { id: 'e-peter3-catherine2', source: 'peter3', target: 'catherine2', type: 'spouse' },
+  { id: 'e-peter3-paul', source: 'peter3', target: 'paul1' },
+  { id: 'e-paul-maria', source: 'paul1', target: 'maria-feodorovna', type: 'spouse' },
+  { id: 'e-paul-alexander1', source: 'paul1', target: 'alexander1' },
+  { id: 'e-paul-constantine', source: 'paul1', target: 'constantine' },
+  { id: 'e-paul-nicholas1', source: 'paul1', target: 'nicholas1' },
+  { id: 'e-nicholas1-alexandra1', source: 'nicholas1', target: 'alexandra-feodorovna1', type: 'spouse' },
+  { id: 'e-nicholas1-alexander2', source: 'nicholas1', target: 'alexander2' },
+  { id: 'e-alexander2-maria-a', source: 'alexander2', target: 'maria-alexandrovna', type: 'spouse' },
+  { id: 'e-alexander2-alexander3', source: 'alexander2', target: 'alexander3' },
+  { id: 'e-alexander3-maria-f', source: 'alexander3', target: 'maria-feodorovna2', type: 'spouse' },
+  { id: 'e-alexander3-nicholas2', source: 'alexander3', target: 'nicholas2' },
+  { id: 'e-nicholas2-alexandra2', source: 'nicholas2', target: 'alexandra-feodorovna2', type: 'spouse' },
+  { id: 'e-nicholas2-olga', source: 'nicholas2', target: 'olga-nikolaevna' },
+  { id: 'e-nicholas2-tatiana', source: 'nicholas2', target: 'tatiana-nikolaevna' },
+  { id: 'e-nicholas2-maria', source: 'nicholas2', target: 'maria-nikolaevna' },
+  { id: 'e-nicholas2-anastasia', source: 'nicholas2', target: 'anastasia-nikolaevna' },
+  { id: 'e-nicholas2-alexey', source: 'nicholas2', target: 'alexey-nikolaevich' }
+];
 
 export default function DemoPage({ onClose }: DemoPageProps) {
-  const [selectedPerson, setSelectedPerson] = React.useState<Person | null>(null);
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [mode, setMode] = React.useState<'canvas' | 'timeline'>('canvas');
+  const [transform, setTransform] = React.useState({ x: 0, y: 0, k: 1 });
+  const lastMousePos = useRef({ x: 0, y: 0 });
+
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setTransform(prev => ({
+      ...prev,
+      k: Math.max(0.3, Math.min(2.5, prev.k * delta))
+    }));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 0) {
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (e.buttons === 1 && !selectedId) {
+      const dx = e.clientX - lastMousePos.current.x;
+      const dy = e.clientY - lastMousePos.current.y;
+      setTransform(prev => ({
+        ...prev,
+        x: prev.x + dx,
+        y: prev.y + dy
+      }));
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
+  const handleMouseUp = () => {};
+
+  const handleNodeDragStart = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+  };
+
+  const selectedNode = DEMO_NODES.find(n => n.id === selectedId) || null;
+  const parents = selectedNode ? DEMO_EDGES
+    .filter(e => e.target === selectedId && e.type !== 'spouse')
+    .map(e => DEMO_NODES.find(n => n.id === e.source))
+    .filter(Boolean) as FamilyNode[] : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background pt-20">
-      <div className="min-h-screen pb-24">
-        <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-50 border-b border-border/50 shadow-sm">
-          <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={onClose}
-                className="border-primary/30 hover:border-primary"
-              >
-                <Icon name="ArrowLeft" size={20} className="mr-2" />
-                Назад
-              </Button>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">Династия Романовых</h1>
-                <p className="text-sm text-muted-foreground">Демонстрационный режим</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
-              <Icon name="Eye" size={18} className="text-blue-600" />
-              <span className="text-sm font-semibold text-blue-700">Режим просмотра</span>
-            </div>
+    <div className="h-screen w-full bg-background flex flex-col relative">
+      <div className="h-16 bg-white border-b border-border flex items-center justify-between px-6 shrink-0">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="border-primary/30 hover:border-primary"
+          >
+            <Icon name="ArrowLeft" size={20} className="mr-2" />
+            Назад
+          </Button>
+          <div>
+            <h1 className="text-lg font-bold text-foreground flex items-center gap-2">
+              <Icon name="Crown" size={20} className="text-amber-500" />
+              Династия Романовых (1613-1918)
+            </h1>
+            <p className="text-xs text-muted-foreground">Демонстрация возможностей конструктора</p>
           </div>
-        </header>
-
-        <div className="max-w-7xl mx-auto px-6 pt-12">
-          <div className="text-center mb-12">
-            <div className="inline-block mb-4">
-              <div className="px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full text-primary text-sm font-semibold border border-primary/20">
-                <Icon name="Crown" size={14} className="inline mr-2" />
-                1613-1917 • 304 года правления
-              </div>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-              Генеалогическое древо династии Романовых
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Интерактивная демонстрация возможностей сервиса на примере царской династии
-            </p>
-          </div>
-
-          <div className="space-y-16">
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">I</span>
-                </div>
-                Первые Романовы (1613-1725)
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {['mikhail', 'alexey', 'fyodor', 'peter1'].map(personId => {
-                  const person = romanovDynasty[personId];
-                  return (
-                    <Card
-                      key={person.id}
-                      className="p-6 hover:shadow-xl transition-all cursor-pointer hover:-translate-y-1 border-2"
-                      onClick={() => setSelectedPerson(person)}
-                    >
-                      <div className="aspect-square w-full mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
-                        <img
-                          src={person.photo}
-                          alt={person.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <h4 className="font-bold text-foreground mb-1">{person.name}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{person.years}</p>
-                      <p className="text-xs text-primary font-semibold">{person.title}</p>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">II</span>
-                </div>
-                Эпоха дворцовых переворотов (1725-1801)
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {['anna', 'elizabeth', 'peter3', 'catherine2', 'paul1'].map(personId => {
-                  const person = romanovDynasty[personId];
-                  return (
-                    <Card
-                      key={person.id}
-                      className="p-6 hover:shadow-xl transition-all cursor-pointer hover:-translate-y-1 border-2"
-                      onClick={() => setSelectedPerson(person)}
-                    >
-                      <div className="aspect-square w-full mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
-                        <img
-                          src={person.photo}
-                          alt={person.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <h4 className="font-bold text-foreground mb-1">{person.name}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{person.years}</p>
-                      <p className="text-xs text-primary font-semibold">{person.title}</p>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">III</span>
-                </div>
-                Расцвет и закат империи (1801-1917)
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {['alexander1', 'nicholas1', 'alexander2', 'alexander3', 'nicholas2'].map(personId => {
-                  const person = romanovDynasty[personId];
-                  return (
-                    <Card
-                      key={person.id}
-                      className="p-6 hover:shadow-xl transition-all cursor-pointer hover:-translate-y-1 border-2"
-                      onClick={() => setSelectedPerson(person)}
-                    >
-                      <div className="aspect-square w-full mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5">
-                        <img
-                          src={person.photo}
-                          alt={person.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <h4 className="font-bold text-foreground mb-1">{person.name}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{person.years}</p>
-                      <p className="text-xs text-primary font-semibold">{person.title}</p>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16 max-w-3xl mx-auto">
-            <Card className="p-8 bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary/20">
-              <div className="text-center">
-                <Icon name="Sparkles" size={32} className="mx-auto mb-4 text-primary" />
-                <h3 className="text-2xl font-bold text-foreground mb-3">
-                  Создайте свою семейную историю
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  Этот демонстрационный режим показывает возможности сервиса. Создайте свое древо с фотографиями, датами и историями вашей семьи.
-                </p>
-                <Button
-                  onClick={onClose}
-                  size="lg"
-                  className="shadow-lg shadow-primary/30"
-                >
-                  <Icon name="TreePine" size={20} className="mr-2" />
-                  Начать создавать древо
-                </Button>
-              </div>
-            </Card>
-          </div>
+        </div>
+        <div className="flex items-center gap-3 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+          <Icon name="Eye" size={18} className="text-blue-600" />
+          <span className="text-sm font-semibold text-blue-700">Режим просмотра</span>
         </div>
       </div>
 
-      {selectedPerson && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedPerson(null)}
-        >
-          <Card
-            className="max-w-2xl w-full p-8 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setSelectedPerson(null)}
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <Icon name="X" size={24} />
-            </button>
-
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="w-full md:w-48 aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-primary/5 to-accent/5 flex-shrink-0">
-                <img
-                  src={selectedPerson.photo}
-                  alt={selectedPerson.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="flex-1">
-                <div className="mb-4">
-                  <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-xs font-semibold text-primary mb-3">
-                    <Icon name="Crown" size={12} className="inline mr-1" />
-                    Династия Романовых
-                  </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
-                    {selectedPerson.name}
-                  </h3>
-                  <p className="text-muted-foreground mb-2">{selectedPerson.years}</p>
-                  <p className="text-primary font-semibold">{selectedPerson.title}</p>
-                </div>
-
-                {selectedPerson.parents && selectedPerson.parents.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <Icon name="Users" size={16} />
-                      Родители:
-                    </p>
-                    <div className="space-y-1">
-                      {selectedPerson.parents.map(parentId => {
-                        const parent = romanovDynasty[parentId];
-                        return (
-                          <button
-                            key={parentId}
-                            onClick={() => setSelectedPerson(parent)}
-                            className="block text-sm text-primary hover:underline"
-                          >
-                            {parent.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {selectedPerson.spouse && (
-                  <div className="mb-4">
-                    <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <Icon name="Heart" size={16} />
-                      Супруг(а):
-                    </p>
-                    <button
-                      onClick={() => setSelectedPerson(romanovDynasty[selectedPerson.spouse!])}
-                      className="block text-sm text-primary hover:underline"
-                    >
-                      {romanovDynasty[selectedPerson.spouse].name}
-                    </button>
-                  </div>
-                )}
-
-                {selectedPerson.children && selectedPerson.children.length > 0 && (
-                  <div>
-                    <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <Icon name="Baby" size={16} />
-                      Дети:
-                    </p>
-                    <div className="space-y-1">
-                      {selectedPerson.children.map(childId => {
-                        const child = romanovDynasty[childId];
-                        return (
-                          <button
-                            key={childId}
-                            onClick={() => setSelectedPerson(child)}
-                            className="block text-sm text-primary hover:underline"
-                          >
-                            {child.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
+      <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 relative">
+          <TreeCanvas
+            nodes={DEMO_NODES}
+            edges={DEMO_EDGES}
+            selectedId={selectedId}
+            transform={transform}
+            mode={mode}
+            onSetMode={setMode}
+            onSetTransform={setTransform}
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onNodeDragStart={handleNodeDragStart}
+            onSelectNode={setSelectedId}
+            onAddRelative={() => {}}
+            lastMousePos={lastMousePos}
+          />
         </div>
-      )}
+
+        {selectedId && selectedNode && (
+          <PersonInspector
+            node={selectedNode}
+            parents={parents}
+            onChange={() => {}}
+            onClose={() => setSelectedId(null)}
+            onDelete={() => {}}
+            readOnly={true}
+          />
+        )}
+      </div>
     </div>
   );
 }
