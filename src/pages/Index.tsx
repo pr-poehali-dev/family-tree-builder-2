@@ -162,7 +162,7 @@ export default function Index() {
   }
 
   if (currentView === 'landing') {
-    return <LandingPage onStart={handleStart} onGoToDashboard={() => setCurrentView('dashboard')} />;
+    return <LandingPage onStart={handleStart} onGoToDashboard={() => setCurrentView('dashboard')} onGoToTree={() => setCurrentView('tree')} />;
   }
 
   if (currentView === 'onboarding') {

@@ -12,18 +12,21 @@ import AuthModal from '@/components/AuthModal';
 interface LandingPageProps {
   onStart: () => void;
   onGoToDashboard: () => void;
+  onGoToTree: () => void;
 }
 
-export default function LandingPage({ onStart, onGoToDashboard }: LandingPageProps) {
+export default function LandingPage({ onStart, onGoToDashboard, onGoToTree }: LandingPageProps) {
   const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support' | 'pricing' | 'demo'>('home');
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'register'>('login');
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [userData, setUserData] = React.useState<any>(null);
+  const [hasExistingTree, setHasExistingTree] = React.useState(false);
 
   React.useEffect(() => {
     const sessionToken = localStorage.getItem('session_token');
     const storedUserData = localStorage.getItem('user_data');
+    const savedNodes = localStorage.getItem('familyTree_nodes');
     
     if (sessionToken && storedUserData) {
       try {
@@ -31,6 +34,15 @@ export default function LandingPage({ onStart, onGoToDashboard }: LandingPagePro
         if (parsed && parsed.email) {
           setIsAuthenticated(true);
           setUserData(parsed);
+          
+          if (savedNodes) {
+            try {
+              const nodes = JSON.parse(savedNodes);
+              setHasExistingTree(nodes.length > 1);
+            } catch (e) {
+              console.error('Error parsing nodes', e);
+            }
+          }
         }
       } catch (e) {
         console.error('Error parsing user data', e);
@@ -69,7 +81,7 @@ export default function LandingPage({ onStart, onGoToDashboard }: LandingPagePro
             <button onClick={() => setCurrentPage('home')} className={`hover:text-primary transition-all ${currentPage === 'home' ? 'text-primary font-semibold' : ''}`}>
               Главная
             </button>
-            <button onClick={onStart} className="hover:text-primary transition-all">
+            <button onClick={isAuthenticated && hasExistingTree ? onGoToTree : onStart} className="hover:text-primary transition-all">
               Древо
             </button>
             <button onClick={() => setCurrentPage('pricing')} className={`hover:text-primary transition-all ${currentPage === 'pricing' ? 'text-primary font-semibold' : ''}`}>
