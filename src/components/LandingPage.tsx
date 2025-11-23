@@ -83,7 +83,6 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         onClose={() => setAuthModalOpen(false)}
         onSuccess={(sessionToken, userData) => {
           setAuthModalOpen(false);
-          onStart();
         }}
         onSwitchMode={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
       />

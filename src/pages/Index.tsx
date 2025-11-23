@@ -37,7 +37,6 @@ export default function Index() {
     if (sessionTokenData && userData) {
       try {
         const parsedUserData = JSON.parse(userData);
-        const parsedSessionData = JSON.parse(sessionTokenData);
         
         if (lastActivity) {
           const timeSinceLastActivity = Date.now() - parseInt(lastActivity);
