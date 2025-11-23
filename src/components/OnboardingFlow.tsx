@@ -16,12 +16,31 @@ interface OnboardingFlowProps {
   };
   onFormDataChange: (data: any) => void;
   onNext: () => void;
+  onBack?: () => void;
+  onSkip?: () => void;
 }
 
-export default function OnboardingFlow({ step, formData, onFormDataChange, onNext }: OnboardingFlowProps) {
+export default function OnboardingFlow({ step, formData, onFormDataChange, onNext, onBack, onSkip }: OnboardingFlowProps) {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <Card className="w-full max-w-md p-8 relative overflow-hidden">
+        {step > 1 && (
+          <button
+            onClick={onBack}
+            className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-colors"
+            title="Назад"
+          >
+            <Icon name="ArrowLeft" size={20} />
+          </button>
+        )}
+        {onSkip && step < 3 && (
+          <button
+            onClick={onSkip}
+            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors text-sm"
+          >
+            Пропустить
+          </button>
+        )}
         <div className="absolute top-0 left-0 w-full h-2 bg-muted">
           <div
             className="h-full bg-primary transition-all duration-500"
@@ -117,7 +136,11 @@ export default function OnboardingFlow({ step, formData, onFormDataChange, onNex
             </div>
           )}
 
-          <Button onClick={onNext} className="w-full mt-6">
+          <Button 
+            onClick={onNext} 
+            className="w-full mt-6"
+            disabled={step === 1 && (!formData.firstName || !formData.lastName)}
+          >
             {step === 3 ? 'Перейти в кабинет' : 'Далее'} <Icon name="ChevronRight" size={16} />
           </Button>
         </div>

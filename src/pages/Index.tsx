@@ -3,6 +3,8 @@ import Icon from '@/components/ui/icon';
 import LandingPage from '@/components/LandingPage';
 import OnboardingFlow from '@/components/OnboardingFlow';
 import DashboardPage from '@/components/DashboardPage';
+import HelpTooltip from '@/components/HelpTooltip';
+import EmptyTreeState from '@/components/EmptyTreeState';
 import TreeCanvas, { FamilyNode, Edge } from '@/components/TreeCanvas';
 import PersonInspector from '@/components/PersonInspector';
 
@@ -48,6 +50,9 @@ export default function Index() {
   const [currentTreeId, setCurrentTreeId] = useState<number | null>(null);
   const [userEmail, setUserEmail] = useState<string>('demo@familytree.com');
   const [isSaving, setIsSaving] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -81,11 +86,44 @@ export default function Index() {
     if (savedTreeId) {
       setCurrentTreeId(parseInt(savedTreeId));
     }
-  }, []);
+    
+    const handleKeyboard = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedId) {
+        setSelectedId(null);
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        saveTreeToDatabase();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+        e.preventDefault();
+        setCurrentView('dashboard');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyboard);
+    return () => window.removeEventListener('keydown', handleKeyboard);
+  }, [selectedId]);
 
   useEffect(() => {
     localStorage.setItem('familyTree_nodes', JSON.stringify(nodes));
     localStorage.setItem('familyTree_edges', JSON.stringify(edges));
+    
+    if (autoSaveTimer) {
+      clearTimeout(autoSaveTimer);
+    }
+    
+    const timer = setTimeout(() => {
+      if (nodes.length > 1 && currentView === 'tree') {
+        saveTreeToDatabase();
+      }
+    }, 5000);
+    
+    setAutoSaveTimer(timer);
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [nodes, edges]);
 
   const saveTreeToDatabase = async () => {
@@ -111,7 +149,8 @@ export default function Index() {
       if (response.ok) {
         setCurrentTreeId(data.tree_id);
         localStorage.setItem('familyTree_treeId', data.tree_id.toString());
-        alert('Древо успешно сохранено в базе данных!');
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 3000);
       } else {
         alert('Ошибка сохранения: ' + data.error);
       }
@@ -124,6 +163,16 @@ export default function Index() {
   };
 
   const handleStart = () => setCurrentView('onboarding');
+
+  const handleOnboardingBack = () => {
+    if (onboardingStep > 1) {
+      setOnboardingStep(onboardingStep - 1);
+    }
+  };
+
+  const handleOnboardingSkip = () => {
+    setOnboardingStep(3);
+  };
 
   const handleOnboardingNext = () => {
     if (onboardingStep === 3) {
@@ -304,6 +353,14 @@ export default function Index() {
       alert('Нельзя удалить корневую персону!');
       return;
     }
+    
+    const node = nodes.find(n => n.id === id);
+    const nodeName = node ? `${node.firstName} ${node.lastName}`.trim() || 'этого человека' : 'этого человека';
+    
+    if (!window.confirm(`Вы уверены, что хотите удалить ${nodeName} из древа?`)) {
+      return;
+    }
+    
     setNodes((prev) => prev.filter((n) => n.id !== id));
     setEdges((prev) => prev.filter((e) => e.source !== id && e.target !== id));
     setSelectedId(null);
@@ -360,6 +417,8 @@ export default function Index() {
         formData={formData}
         onFormDataChange={setFormData}
         onNext={handleOnboardingNext}
+        onBack={handleOnboardingBack}
+        onSkip={handleOnboardingSkip}
       />
     );
   }
@@ -369,23 +428,44 @@ export default function Index() {
   }
 
   return (
-    <div className="h-screen w-full bg-background flex flex-col">
-      <div className="h-16 bg-white border-b border-border flex items-center justify-between px-6 shrink-0">
-        <div className="font-bold text-primary flex items-center gap-2">
-          <Icon name="Share2" /> Семейные корни
+    <div className="h-screen w-full bg-background flex flex-col relative">
+      {showSuccessToast && (
+        <div className="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-top">
+          <Icon name="Check" size={20} />
+          <span className="font-medium">Древо сохранено</span>
         </div>
-        <div className="flex gap-4 items-center">
+      )}
+      <div className="h-16 bg-white border-b border-border flex items-center justify-between px-6 shrink-0">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setCurrentView('landing')}
+            className="text-muted-foreground hover:text-primary transition-colors"
+            title="Вернуться на главную"
+          >
+            <Icon name="Home" size={20} />
+          </button>
+          <div className="font-bold text-primary flex items-center gap-2">
+            <Icon name="Share2" /> Семейные корни
+          </div>
+        </div>
+        <div className="flex gap-2 md:gap-4 items-center">
           <button
             onClick={saveTreeToDatabase}
             disabled={isSaving}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 text-sm font-medium flex items-center gap-2"
+            className="px-3 md:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 text-xs md:text-sm font-medium flex items-center gap-2"
             title="Сохранить в базу данных"
           >
-            <Icon name="Save" size={16} />
-            {isSaving ? 'Сохранение...' : 'Сохранить'}
+            <Icon name={isSaving ? "Loader2" : "Save"} size={16} className={isSaving ? "animate-spin" : ""} />
+            <span className="hidden sm:inline">{isSaving ? 'Сохранение...' : 'Сохранить'}</span>
           </button>
+          
+          {!isSaving && nodes.length > 1 && (
+            <span className="text-xs text-muted-foreground hidden lg:inline">
+              Автосохранение
+            </span>
+          )}
 
-          <div className="w-px h-6 bg-border mx-2"></div>
+          <div className="w-px h-6 bg-border mx-1 md:mx-2"></div>
 
           <button
             onClick={handleExport}
@@ -413,17 +493,22 @@ export default function Index() {
           >
             <Icon name="LayoutDashboard" size={20} />
           </button>
-          <button className="text-muted-foreground hover:text-primary transition-colors">
-            <Icon name="Settings" size={20} />
+          <HelpTooltip />
+          
+          <button 
+            onClick={() => setCurrentView('dashboard')}
+            className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs cursor-pointer hover:bg-primary/20 transition-colors"
+            title="Открыть профиль"
+          >
+            {nodes[0]?.firstName?.[0] || 'U'}
+            {nodes[0]?.lastName?.[0] || ''}
           </button>
-          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs cursor-pointer hover:bg-primary/20 transition-colors">
-            {nodes[0]?.firstName?.[0]}
-            {nodes[0]?.lastName?.[0]}
-          </div>
         </div>
       </div>
 
       <div className="flex h-[calc(100vh-64px)] overflow-hidden relative bg-muted/30 select-none">
+        {nodes.length === 1 && !selectedId && <EmptyTreeState />}
+        
         <TreeCanvas
           nodes={nodes}
           edges={edges}
