@@ -224,8 +224,8 @@ export default function PricingPage({ onStart }: PricingPageProps) {
           </Card>
 
           <Card className="p-8 hover:shadow-2xl transition-all border-2 border-primary bg-gradient-to-br from-primary/5 to-accent/5 relative">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 text-white px-6 py-2 rounded-full text-sm font-black shadow-2xl border-2 border-white z-10">
-              ⭐ ВЫГОДНЕЕ ВСЕГО ⭐
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg z-10">
+              ВЫГОДНЕЕ ВСЕГО
             </div>
 
             <div className="mb-6">
