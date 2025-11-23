@@ -219,7 +219,10 @@ export default function TreeCanvas({
                           selected ? 'ring-2 ring-primary shadow-xl' : ''
                         }`}
                       >
-                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                        <div 
+                          className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             title="Добавить родственника"
                             className="bg-foreground text-background rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary shadow-lg hover:scale-110 transition"
@@ -230,106 +233,106 @@ export default function TreeCanvas({
                           >
                             <Icon name="Plus" size={14} />
                           </button>
-                        </div>
 
-                        {menuOpen && (
-                          <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-xl border border-border p-2 min-w-[140px] z-30">
-                            <div className="space-y-1">
-                              {node.gender === 'male' && (
+                          {menuOpen && (
+                            <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-white rounded-md shadow-xl border border-border overflow-hidden min-w-[120px] z-30">
+                              <div className="grid grid-cols-2 gap-px bg-border">
+                                {node.gender === 'male' && (
+                                  <button
+                                    className="bg-white hover:bg-pink-50 p-2 flex flex-col items-center gap-1 transition-colors"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onAddRelative(node.id, 'spouse', 'female');
+                                      setActiveMenu(null);
+                                    }}
+                                  >
+                                    <Icon name="Heart" size={16} className="text-pink-500" />
+                                    <span className="text-xs font-medium">Жена</span>
+                                  </button>
+                                )}
+                                {node.gender === 'female' && (
+                                  <button
+                                    className="bg-white hover:bg-blue-50 p-2 flex flex-col items-center gap-1 transition-colors"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onAddRelative(node.id, 'spouse', 'male');
+                                      setActiveMenu(null);
+                                    }}
+                                  >
+                                    <Icon name="Heart" size={16} className="text-blue-500" />
+                                    <span className="text-xs font-medium">Муж</span>
+                                  </button>
+                                )}
                                 <button
-                                  className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                  className="bg-white hover:bg-blue-50 p-2 flex flex-col items-center gap-1 transition-colors"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    onAddRelative(node.id, 'spouse', 'female');
+                                    onAddRelative(node.id, 'parent', 'male');
                                     setActiveMenu(null);
                                   }}
                                 >
-                                  <Icon name="Heart" size={14} className="text-pink-500" />
-                                  Жена
+                                  <Icon name="UserRound" size={16} className="text-blue-500" />
+                                  <span className="text-xs font-medium">Отец</span>
                                 </button>
-                              )}
-                              {node.gender === 'female' && (
                                 <button
-                                  className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                  className="bg-white hover:bg-pink-50 p-2 flex flex-col items-center gap-1 transition-colors"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    onAddRelative(node.id, 'spouse', 'male');
+                                    onAddRelative(node.id, 'parent', 'female');
                                     setActiveMenu(null);
                                   }}
                                 >
-                                  <Icon name="Heart" size={14} className="text-blue-500" />
-                                  Муж
+                                  <Icon name="UserRound" size={16} className="text-pink-500" />
+                                  <span className="text-xs font-medium">Мать</span>
                                 </button>
-                              )}
-                              <button
-                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAddRelative(node.id, 'sibling', 'male');
-                                  setActiveMenu(null);
-                                }}
-                              >
-                                <Icon name="User" size={14} className="text-blue-500" />
-                                Брат
-                              </button>
-                              <button
-                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAddRelative(node.id, 'sibling', 'female');
-                                  setActiveMenu(null);
-                                }}
-                              >
-                                <Icon name="User" size={14} className="text-pink-500" />
-                                Сестра
-                              </button>
-                              <button
-                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAddRelative(node.id, 'child', 'male');
-                                  setActiveMenu(null);
-                                }}
-                              >
-                                <Icon name="Baby" size={14} className="text-blue-500" />
-                                Сын
-                              </button>
-                              <button
-                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAddRelative(node.id, 'child', 'female');
-                                  setActiveMenu(null);
-                                }}
-                              >
-                                <Icon name="Baby" size={14} className="text-pink-500" />
-                                Дочь
-                              </button>
-                              <button
-                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAddRelative(node.id, 'parent', 'male');
-                                  setActiveMenu(null);
-                                }}
-                              >
-                                <Icon name="User" size={14} className="text-blue-500" />
-                                Отец
-                              </button>
-                              <button
-                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onAddRelative(node.id, 'parent', 'female');
-                                  setActiveMenu(null);
-                                }}
-                              >
-                                <Icon name="User" size={14} className="text-pink-500" />
-                                Мать
-                              </button>
+                                <button
+                                  className="bg-white hover:bg-blue-50 p-2 flex flex-col items-center gap-1 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddRelative(node.id, 'sibling', 'male');
+                                    setActiveMenu(null);
+                                  }}
+                                >
+                                  <Icon name="Users" size={16} className="text-blue-500" />
+                                  <span className="text-xs font-medium">Брат</span>
+                                </button>
+                                <button
+                                  className="bg-white hover:bg-pink-50 p-2 flex flex-col items-center gap-1 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddRelative(node.id, 'sibling', 'female');
+                                    setActiveMenu(null);
+                                  }}
+                                >
+                                  <Icon name="Users" size={16} className="text-pink-500" />
+                                  <span className="text-xs font-medium">Сестра</span>
+                                </button>
+                                <button
+                                  className="bg-white hover:bg-blue-50 p-2 flex flex-col items-center gap-1 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddRelative(node.id, 'child', 'male');
+                                    setActiveMenu(null);
+                                  }}
+                                >
+                                  <Icon name="Baby" size={16} className="text-blue-500" />
+                                  <span className="text-xs font-medium">Сын</span>
+                                </button>
+                                <button
+                                  className="bg-white hover:bg-pink-50 p-2 flex flex-col items-center gap-1 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddRelative(node.id, 'child', 'female');
+                                    setActiveMenu(null);
+                                  }}
+                                >
+                                  <Icon name="Baby" size={16} className="text-pink-500" />
+                                  <span className="text-xs font-medium">Дочь</span>
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
 
                         <div className="flex items-center gap-3 select-none">
                           <div
