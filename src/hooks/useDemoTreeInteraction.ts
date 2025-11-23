@@ -4,7 +4,7 @@ import { FamilyNode, Edge } from '@/components/TreeCanvas';
 export function useDemoTreeInteraction(nodes: FamilyNode[], edges: Edge[]) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mode, setMode] = useState<'canvas' | 'timeline'>('canvas');
-  const [transform, setTransform] = useState({ x: 100, y: 50, k: 0.6 });
+  const [transform, setTransform] = useState({ x: -100, y: 100, k: 0.7 });
   const lastMousePos = useRef({ x: 0, y: 0 });
 
   const handleWheel = (e: React.WheelEvent) => {
