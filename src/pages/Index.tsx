@@ -17,13 +17,28 @@ export default function Index() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
+  const handleLogout = () => {
+    localStorage.removeItem('session_token');
+    localStorage.removeItem('user_data');
+    localStorage.removeItem('last_view');
+    setCurrentView('landing');
+  };
+
   useEffect(() => {
-    const sessionToken = localStorage.getItem('session_token');
+    const sessionTokenData = localStorage.getItem('session_token');
     const userData = localStorage.getItem('user_data');
     
-    if (sessionToken && userData) {
+    if (sessionTokenData && userData) {
       try {
         const parsedUserData = JSON.parse(userData);
+        const parsedSessionData = JSON.parse(sessionTokenData);
+        
+        if (parsedSessionData.expiresAt && Date.now() > parsedSessionData.expiresAt) {
+          handleLogout();
+          setIsAuthChecked(true);
+          return;
+        }
+        
         if (parsedUserData && parsedUserData.email) {
           const savedView = localStorage.getItem('last_view');
           if (savedView && (savedView === 'tree' || savedView === 'dashboard')) {
@@ -33,7 +48,8 @@ export default function Index() {
           }
         }
       } catch (e) {
-        console.error('Invalid user data', e);
+        console.error('Invalid session data', e);
+        handleLogout();
       }
     }
     
@@ -203,12 +219,7 @@ export default function Index() {
           </button>
 
           <button 
-            onClick={() => {
-              localStorage.removeItem('session_token');
-              localStorage.removeItem('user_data');
-              localStorage.removeItem('last_view');
-              setCurrentView('landing');
-            }}
+            onClick={handleLogout}
             className="text-muted-foreground hover:text-red-600 transition-colors"
             title="Выйти"
           >
