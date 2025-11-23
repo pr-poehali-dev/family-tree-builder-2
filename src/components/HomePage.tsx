@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 
 interface HomePageProps {
   onStart: () => void;
+  onDemo: () => void;
 }
 
-export default function HomePage({ onStart }: HomePageProps) {
+export default function HomePage({ onStart, onDemo }: HomePageProps) {
   return (
     <>
       <section className="pt-32 pb-24 px-6 relative overflow-hidden">
@@ -44,6 +45,7 @@ export default function HomePage({ onStart }: HomePageProps) {
                 Создать древо
               </Button>
               <Button 
+                onClick={onDemo}
                 variant="outline" 
                 className="text-lg px-10 py-6 border-2 hover:border-primary hover:bg-primary/5 transition-all hover:scale-105" 
                 size="lg"

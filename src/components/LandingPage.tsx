@@ -6,6 +6,7 @@ import LearningPage from '@/components/LearningPage';
 import ArchivesPage from '@/components/ArchivesPage';
 import SupportPage from '@/components/SupportPage';
 import PricingPage from '@/components/PricingPage';
+import DemoPage from '@/components/DemoPage';
 import AuthModal from '@/components/AuthModal';
 
 interface LandingPageProps {
@@ -13,7 +14,7 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ onStart }: LandingPageProps) {
-  const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support' | 'pricing'>('home');
+  const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support' | 'pricing' | 'demo'>('home');
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'register'>('login');
 
@@ -67,11 +68,12 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         </div>
       </header>
 
-      {currentPage === 'home' && <HomePage onStart={onStart} />}
+      {currentPage === 'home' && <HomePage onStart={onStart} onDemo={() => setCurrentPage('demo')} />}
       {currentPage === 'pricing' && <PricingPage onStart={onStart} />}
       {currentPage === 'learning' && <LearningPage />}
       {currentPage === 'archives' && <ArchivesPage />}
       {currentPage === 'support' && <SupportPage />}
+      {currentPage === 'demo' && <DemoPage onClose={() => setCurrentPage('home')} />}
 
       <AuthModal
         isOpen={authModalOpen}
