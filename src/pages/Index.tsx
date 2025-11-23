@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 import LandingPage from '@/components/LandingPage';
 import OnboardingFlow from '@/components/OnboardingFlow';
@@ -15,6 +15,29 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 export default function Index() {
   const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree' | 'dashboard'>('landing');
   const [showWelcome, setShowWelcome] = useState(true);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const sessionToken = localStorage.getItem('session_token');
+    const userData = localStorage.getItem('user_data');
+    
+    if (sessionToken && userData) {
+      const savedView = localStorage.getItem('last_view');
+      if (savedView && (savedView === 'tree' || savedView === 'dashboard')) {
+        setCurrentView(savedView as 'tree' | 'dashboard');
+      } else {
+        setCurrentView('tree');
+      }
+    }
+    
+    setIsAuthChecked(true);
+  }, []);
+
+  useEffect(() => {
+    if (currentView === 'tree' || currentView === 'dashboard') {
+      localStorage.setItem('last_view', currentView);
+    }
+  }, [currentView]);
 
   const {
     nodes,
@@ -61,6 +84,17 @@ export default function Index() {
   useKeyboardShortcuts(selectedId, setSelectedId, saveTreeToDatabase, setCurrentView);
 
   const handleStart = () => setCurrentView('onboarding');
+
+  if (!isAuthChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background via-primary/5 to-background">
+        <div className="text-center">
+          <Icon name="Loader2" size={48} className="animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (currentView === 'landing') {
     return <LandingPage onStart={handleStart} />;
@@ -159,6 +193,19 @@ export default function Index() {
           >
             {nodes[0]?.firstName?.[0] || 'U'}
             {nodes[0]?.lastName?.[0] || ''}
+          </button>
+
+          <button 
+            onClick={() => {
+              localStorage.removeItem('session_token');
+              localStorage.removeItem('user_data');
+              localStorage.removeItem('last_view');
+              setCurrentView('landing');
+            }}
+            className="text-muted-foreground hover:text-red-600 transition-colors"
+            title="Выйти"
+          >
+            <Icon name="LogOut" size={20} />
           </button>
         </div>
       </div>
