@@ -53,14 +53,16 @@ export default function DemoPage({ onClose }: DemoPageProps) {
         </div>
 
         {selectedId && selectedNode && (
-          <PersonInspector
-            node={selectedNode}
-            parents={parents}
-            onChange={() => {}}
-            onClose={() => setSelectedId(null)}
-            onDelete={() => {}}
-            readOnly={true}
-          />
+          <div className="fixed md:relative inset-y-0 right-0 w-80 md:w-96 bg-white shadow-2xl md:shadow-xl border-l border-border flex flex-col z-40">
+            <PersonInspector
+              selectedNode={selectedNode}
+              parents={parents}
+              onClose={() => setSelectedId(null)}
+              onUpdateNode={() => {}}
+              onSelectNode={setSelectedId}
+              onDeleteNode={() => {}}
+            />
+          </div>
         )}
       </div>
     </div>
