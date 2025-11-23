@@ -696,7 +696,7 @@ const DEMO_EDGES: Edge[] = [
 export default function DemoPage({ onClose }: DemoPageProps) {
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [mode, setMode] = React.useState<'canvas' | 'timeline'>('canvas');
-  const [transform, setTransform] = React.useState({ x: 0, y: 0, k: 1 });
+  const [transform, setTransform] = React.useState({ x: 100, y: 50, k: 0.6 });
   const lastMousePos = useRef({ x: 0, y: 0 });
 
   const handleWheel = (e: React.WheelEvent) => {
