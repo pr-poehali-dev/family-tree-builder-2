@@ -111,6 +111,18 @@ export default function PersonInspector({
                 onChange={(e) => onUpdateNode('birthDate', e.target.value)}
               />
             </div>
+            
+            <div className="flex items-center space-x-2 bg-primary/10 p-2 rounded-lg border border-primary/20">
+              <Checkbox
+                id="isAlive"
+                checked={selectedNode.isAlive}
+                onCheckedChange={(checked) => onUpdateNode('isAlive', checked)}
+              />
+              <Label htmlFor="isAlive" className="text-sm font-medium text-foreground cursor-pointer">
+                Человек жив
+              </Label>
+            </div>
+            
             <div>
               <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 Место рождения
@@ -124,17 +136,6 @@ export default function PersonInspector({
                 <Icon name="Home" size={14} className="absolute left-2.5 top-2.5 text-muted-foreground" />
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center space-x-2 bg-primary/10 p-2 rounded-lg border border-primary/20">
-            <Checkbox
-              id="isAlive"
-              checked={selectedNode.isAlive}
-              onCheckedChange={(checked) => onUpdateNode('isAlive', checked)}
-            />
-            <Label htmlFor="isAlive" className="text-sm font-medium text-foreground cursor-pointer">
-              Человек жив
-            </Label>
           </div>
 
           {!selectedNode.isAlive && (

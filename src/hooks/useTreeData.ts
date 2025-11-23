@@ -77,7 +77,7 @@ export function useTreeData(currentView: string) {
       if (nodes.length > 1 && currentView === 'tree') {
         saveTreeToDatabase();
       }
-    }, 5000);
+    }, 900000);
     
     setAutoSaveTimer(timer);
     
