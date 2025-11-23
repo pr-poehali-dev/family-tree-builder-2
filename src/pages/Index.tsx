@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 import LandingPage from '@/components/LandingPage';
 import OnboardingFlow from '@/components/OnboardingFlow';
+import DashboardPage from '@/components/DashboardPage';
 import TreeCanvas, { FamilyNode, Edge } from '@/components/TreeCanvas';
 import PersonInspector from '@/components/PersonInspector';
 
@@ -34,7 +35,7 @@ const API_URLS = {
 };
 
 export default function Index() {
-  const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree' | 'dashboard'>('landing');
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [nodes, setNodes] = useState<FamilyNode[]>(INITIAL_NODES);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -363,6 +364,10 @@ export default function Index() {
     );
   }
 
+  if (currentView === 'dashboard') {
+    return <DashboardPage onClose={() => setCurrentView('tree')} />;
+  }
+
   return (
     <div className="h-screen w-full bg-background flex flex-col">
       <div className="h-16 bg-white border-b border-border flex items-center justify-between px-6 shrink-0">
@@ -401,13 +406,17 @@ export default function Index() {
 
           <div className="w-px h-6 bg-border mx-2"></div>
 
-          <button className="text-muted-foreground hover:text-primary transition-colors">
-            <Icon name="Home" size={20} />
+          <button 
+            onClick={() => setCurrentView('dashboard')}
+            className="text-muted-foreground hover:text-primary transition-colors"
+            title="Личный кабинет"
+          >
+            <Icon name="LayoutDashboard" size={20} />
           </button>
           <button className="text-muted-foreground hover:text-primary transition-colors">
             <Icon name="Settings" size={20} />
           </button>
-          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs">
+          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs cursor-pointer hover:bg-primary/20 transition-colors">
             {nodes[0]?.firstName?.[0]}
             {nodes[0]?.lastName?.[0]}
           </div>
