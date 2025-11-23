@@ -365,7 +365,7 @@ export default function Index() {
   }
 
   if (currentView === 'dashboard') {
-    return <DashboardPage onClose={() => setCurrentView('tree')} />;
+    return <DashboardPage onClose={() => setCurrentView('tree')} nodes={nodes} edges={edges} />;
   }
 
   return (

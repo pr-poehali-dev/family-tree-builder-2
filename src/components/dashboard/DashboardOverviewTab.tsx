@@ -1,27 +1,21 @@
 import React from 'react';
 import Icon from '@/components/ui/icon';
 import { Card } from '@/components/ui/card';
-
-interface Stats {
-  totalPeople: number;
-  generations: number;
-  photosAdded: number;
-  storiesWritten: number;
-  documentsUploaded: number;
-  completionPercentage: number;
-}
+import { Stats, RecentActivity } from '@/data/dashboardMockData';
+import { FamilyNode, Edge } from '@/components/TreeCanvas';
+import { getRecommendations } from '@/utils/dashboardRecommendations';
+import { getProfileCompleteness } from '@/utils/dashboardMetrics';
 
 interface DashboardOverviewTabProps {
   stats: Stats;
-  recentActivity: Array<{
-    action: string;
-    person: string;
-    time: string;
-    icon: string;
-  }>;
+  recentActivity: RecentActivity[];
+  nodes?: FamilyNode[];
+  edges?: Edge[];
 }
 
-export default function DashboardOverviewTab({ stats, recentActivity }: DashboardOverviewTabProps) {
+export default function DashboardOverviewTab({ stats, recentActivity, nodes = [], edges = [] }: DashboardOverviewTabProps) {
+  const recommendations = getRecommendations(nodes, edges);
+  const { complete, partial, minimal } = getProfileCompleteness(nodes);
   return (
     <div className="space-y-8">
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -92,7 +86,7 @@ export default function DashboardOverviewTab({ stats, recentActivity }: Dashboar
             </div>
             <div>
               <div className="font-semibold text-green-900">Заполнено</div>
-              <div className="text-sm text-green-700">30 профилей</div>
+              <div className="text-sm text-green-700">{complete} профилей</div>
             </div>
           </div>
 
@@ -102,7 +96,7 @@ export default function DashboardOverviewTab({ stats, recentActivity }: Dashboar
             </div>
             <div>
               <div className="font-semibold text-yellow-900">Частично</div>
-              <div className="text-sm text-yellow-700">12 профилей</div>
+              <div className="text-sm text-yellow-700">{partial} профилей</div>
             </div>
           </div>
 
@@ -112,7 +106,7 @@ export default function DashboardOverviewTab({ stats, recentActivity }: Dashboar
             </div>
             <div>
               <div className="font-semibold text-gray-900">Не заполнено</div>
-              <div className="text-sm text-gray-700">5 профилей</div>
+              <div className="text-sm text-gray-700">{minimal} профилей</div>
             </div>
           </div>
         </div>
@@ -145,37 +139,27 @@ export default function DashboardOverviewTab({ stats, recentActivity }: Dashboar
             <Icon name="Target" size={20} className="text-primary" />
             Рекомендации
           </h3>
-          <div className="space-y-3">
-            <div className="p-4 bg-white rounded-lg border border-primary/20 hover:border-primary/40 transition-all cursor-pointer">
-              <div className="flex items-start gap-3">
-                <Icon name="UserPlus" size={20} className="text-primary mt-0.5" />
-                <div>
-                  <div className="font-semibold text-foreground mb-1">Добавьте родителей</div>
-                  <div className="text-sm text-muted-foreground">У 8 членов семьи не указаны родители</div>
+          {recommendations.length > 0 ? (
+            <div className="space-y-3">
+              {recommendations.map((rec, index) => (
+                <div key={index} className="p-4 bg-white rounded-lg border border-primary/20 hover:border-primary/40 transition-all cursor-pointer">
+                  <div className="flex items-start gap-3">
+                    <Icon name={rec.icon as any} size={20} className="text-primary mt-0.5" />
+                    <div>
+                      <div className="font-semibold text-foreground mb-1">{rec.title}</div>
+                      <div className="text-sm text-muted-foreground">{rec.description}</div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-
-            <div className="p-4 bg-white rounded-lg border border-primary/20 hover:border-primary/40 transition-all cursor-pointer">
-              <div className="flex items-start gap-3">
-                <Icon name="Camera" size={20} className="text-primary mt-0.5" />
-                <div>
-                  <div className="font-semibold text-foreground mb-1">Загрузите фотографии</div>
-                  <div className="text-sm text-muted-foreground">19 профилей без фотографий</div>
-                </div>
-              </div>
+          ) : (
+            <div className="p-8 text-center">
+              <Icon name="CheckCircle2" size={48} className="text-green-500 mx-auto mb-4" />
+              <div className="text-lg font-semibold text-foreground mb-2">Отличная работа!</div>
+              <div className="text-sm text-muted-foreground">Все основные данные заполнены</div>
             </div>
-
-            <div className="p-4 bg-white rounded-lg border border-primary/20 hover:border-primary/40 transition-all cursor-pointer">
-              <div className="flex items-start gap-3">
-                <Icon name="Calendar" size={20} className="text-primary mt-0.5" />
-                <div>
-                  <div className="font-semibold text-foreground mb-1">Укажите даты</div>
-                  <div className="text-sm text-muted-foreground">Заполните даты рождения для 6 человек</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </Card>
       </div>
     </div>

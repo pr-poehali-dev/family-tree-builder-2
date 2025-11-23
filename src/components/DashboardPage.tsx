@@ -4,16 +4,27 @@ import { Button } from '@/components/ui/button';
 import DashboardOverviewTab from '@/components/dashboard/DashboardOverviewTab';
 import DashboardAchievementsTab from '@/components/dashboard/DashboardAchievementsTab';
 import DashboardStatisticsTab from '@/components/dashboard/DashboardStatisticsTab';
-import { mockStats, mockAchievements, mockRecentActivity, mockLevelData } from '@/data/dashboardMockData';
+import { FamilyNode, Edge } from '@/components/TreeCanvas';
+import { 
+  calculateStats, 
+  calculateAchievements, 
+  calculateLevel, 
+  getRecentActivity 
+} from '@/utils/dashboardMetrics';
 
 interface DashboardPageProps {
   onClose: () => void;
+  nodes: FamilyNode[];
+  edges: Edge[];
 }
 
-export default function DashboardPage({ onClose }: DashboardPageProps) {
+export default function DashboardPage({ onClose, nodes, edges }: DashboardPageProps) {
   const [activeTab, setActiveTab] = React.useState<'overview' | 'achievements' | 'statistics'>('overview');
 
-  const { level, currentXP, nextLevelXP } = mockLevelData;
+  const stats = React.useMemo(() => calculateStats(nodes), [nodes]);
+  const achievements = React.useMemo(() => calculateAchievements(nodes, stats), [nodes, stats]);
+  const { level, currentXP, nextLevelXP } = React.useMemo(() => calculateLevel(achievements), [achievements]);
+  const recentActivity = React.useMemo(() => getRecentActivity(nodes), [nodes]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background pt-20">
@@ -85,12 +96,12 @@ export default function DashboardPage({ onClose }: DashboardPageProps) {
         </div>
 
         {activeTab === 'overview' && (
-          <DashboardOverviewTab stats={mockStats} recentActivity={mockRecentActivity} />
+          <DashboardOverviewTab stats={stats} recentActivity={recentActivity} nodes={nodes} edges={edges} />
         )}
 
         {activeTab === 'achievements' && (
           <DashboardAchievementsTab 
-            achievements={mockAchievements}
+            achievements={achievements}
             level={level}
             currentXP={currentXP}
             nextLevelXP={nextLevelXP}
@@ -98,7 +109,7 @@ export default function DashboardPage({ onClose }: DashboardPageProps) {
         )}
 
         {activeTab === 'statistics' && (
-          <DashboardStatisticsTab stats={mockStats} />
+          <DashboardStatisticsTab stats={stats} nodes={nodes} />
         )}
       </div>
     </div>
