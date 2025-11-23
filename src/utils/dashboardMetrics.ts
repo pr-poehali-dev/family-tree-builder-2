@@ -1,7 +1,11 @@
 import { FamilyNode, Edge } from '@/components/TreeCanvas';
 import { Stats, Achievement, RecentActivity } from '@/data/dashboardMockData';
 
-export function calculateStats(nodes: FamilyNode[]): Stats {
+export function calculateStats(nodes: FamilyNode[]): Stats & { 
+  weeklyPeopleChange: number;
+  weeklyPhotosChange: number;
+  weeklyStoriesChange: number;
+} {
   const totalPeople = nodes.length;
   
   const photosAdded = nodes.filter(node => node.bio && node.bio.includes('фото')).length;
@@ -38,13 +42,67 @@ export function calculateStats(nodes: FamilyNode[]): Stats {
     ? Math.round((filledFields / totalPeople) * 100) 
     : 0;
 
+  const weeklyChanges = calculateWeeklyChanges(nodes);
+
   return {
     totalPeople,
     generations,
     photosAdded,
     storiesWritten,
     documentsUploaded,
-    completionPercentage
+    completionPercentage,
+    ...weeklyChanges
+  };
+}
+
+function calculateWeeklyChanges(nodes: FamilyNode[]): {
+  weeklyPeopleChange: number;
+  weeklyPhotosChange: number;
+  weeklyStoriesChange: number;
+} {
+  const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+  
+  const savedStats = localStorage.getItem('familyTree_weeklyStats');
+  let previousStats = { people: 0, photos: 0, stories: 0, timestamp: 0 };
+  
+  if (savedStats) {
+    try {
+      previousStats = JSON.parse(savedStats);
+    } catch (e) {
+      console.error('Error parsing weekly stats', e);
+    }
+  }
+  
+  if (previousStats.timestamp < weekAgo || previousStats.timestamp === 0) {
+    const currentStats = {
+      people: nodes.length,
+      photos: nodes.filter(node => node.bio && node.bio.includes('фото')).length,
+      stories: nodes.filter(node => 
+        (node.bio && node.bio.length > 50) || 
+        (node.historyContext && node.historyContext.length > 50)
+      ).length,
+      timestamp: Date.now()
+    };
+    
+    localStorage.setItem('familyTree_weeklyStats', JSON.stringify(currentStats));
+    
+    return {
+      weeklyPeopleChange: nodes.length - previousStats.people,
+      weeklyPhotosChange: currentStats.photos - previousStats.photos,
+      weeklyStoriesChange: currentStats.stories - previousStats.stories
+    };
+  }
+  
+  const currentPhotos = nodes.filter(node => node.bio && node.bio.includes('фото')).length;
+  const currentStories = nodes.filter(node => 
+    (node.bio && node.bio.length > 50) || 
+    (node.historyContext && node.historyContext.length > 50)
+  ).length;
+  
+  return {
+    weeklyPeopleChange: nodes.length - previousStats.people,
+    weeklyPhotosChange: currentPhotos - previousStats.photos,
+    weeklyStoriesChange: currentStories - previousStats.stories
   };
 }
 

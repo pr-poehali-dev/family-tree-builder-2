@@ -16,15 +16,22 @@ interface DashboardOverviewTabProps {
 export default function DashboardOverviewTab({ stats, recentActivity, nodes = [], edges = [] }: DashboardOverviewTabProps) {
   const recommendations = getRecommendations(nodes, edges);
   const { complete, partial, minimal } = getProfileCompleteness(nodes);
+  
+  const weeklyPeopleChange = (stats as any).weeklyPeopleChange || 0;
+  const weeklyPhotosChange = (stats as any).weeklyPhotosChange || 0;
+  const weeklyStoriesChange = (stats as any).weeklyStoriesChange || 0;
+  
   return (
     <div className="space-y-8">
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200">
           <div className="flex items-center justify-between mb-2">
             <Icon name="Users" size={24} className="text-blue-600" />
-            <span className="text-xs font-semibold text-blue-600 bg-blue-200 px-2 py-1 rounded-full">
-              +5 за неделю
-            </span>
+            {weeklyPeopleChange > 0 && (
+              <span className="text-xs font-semibold text-blue-600 bg-blue-200 px-2 py-1 rounded-full">
+                +{weeklyPeopleChange} за неделю
+              </span>
+            )}
           </div>
           <div className="text-3xl font-bold text-blue-900 mb-1">{stats.totalPeople}</div>
           <div className="text-sm text-blue-700">Членов семьи</div>
@@ -41,9 +48,11 @@ export default function DashboardOverviewTab({ stats, recentActivity, nodes = []
         <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200">
           <div className="flex items-center justify-between mb-2">
             <Icon name="Camera" size={24} className="text-purple-600" />
-            <span className="text-xs font-semibold text-purple-600 bg-purple-200 px-2 py-1 rounded-full">
-              +3 за неделю
-            </span>
+            {weeklyPhotosChange > 0 && (
+              <span className="text-xs font-semibold text-purple-600 bg-purple-200 px-2 py-1 rounded-full">
+                +{weeklyPhotosChange} за неделю
+              </span>
+            )}
           </div>
           <div className="text-3xl font-bold text-purple-900 mb-1">{stats.photosAdded}</div>
           <div className="text-sm text-purple-700">Фотографий</div>
@@ -52,9 +61,11 @@ export default function DashboardOverviewTab({ stats, recentActivity, nodes = []
         <Card className="p-6 bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-200">
           <div className="flex items-center justify-between mb-2">
             <Icon name="BookOpen" size={24} className="text-amber-600" />
-            <span className="text-xs font-semibold text-amber-600 bg-amber-200 px-2 py-1 rounded-full">
-              +2 за неделю
-            </span>
+            {weeklyStoriesChange > 0 && (
+              <span className="text-xs font-semibold text-amber-600 bg-amber-200 px-2 py-1 rounded-full">
+                +{weeklyStoriesChange} за неделю
+              </span>
+            )}
           </div>
           <div className="text-3xl font-bold text-amber-900 mb-1">{stats.storiesWritten}</div>
           <div className="text-sm text-amber-700">Историй написано</div>
