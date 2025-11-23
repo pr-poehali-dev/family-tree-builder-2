@@ -22,11 +22,18 @@ export default function Index() {
     const userData = localStorage.getItem('user_data');
     
     if (sessionToken && userData) {
-      const savedView = localStorage.getItem('last_view');
-      if (savedView && (savedView === 'tree' || savedView === 'dashboard')) {
-        setCurrentView(savedView as 'tree' | 'dashboard');
-      } else {
-        setCurrentView('tree');
+      try {
+        const parsedUserData = JSON.parse(userData);
+        if (parsedUserData && parsedUserData.email) {
+          const savedView = localStorage.getItem('last_view');
+          if (savedView && (savedView === 'tree' || savedView === 'dashboard')) {
+            setCurrentView(savedView as 'tree' | 'dashboard');
+          } else {
+            setCurrentView('tree');
+          }
+        }
+      } catch (e) {
+        console.error('Invalid user data', e);
       }
     }
     
