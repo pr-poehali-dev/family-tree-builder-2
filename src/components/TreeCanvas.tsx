@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Icon from '@/components/ui/icon';
 
 export interface FamilyNode {
@@ -42,7 +42,7 @@ interface TreeCanvasProps {
   onMouseUp: () => void;
   onNodeDragStart: (e: React.MouseEvent, id: string) => void;
   onSelectNode: (id: string) => void;
-  onAddRelative: (sourceId: string, type: string) => void;
+  onAddRelative: (sourceId: string, type: string, gender?: 'male' | 'female') => void;
   lastMousePos: React.MutableRefObject<{ x: number; y: number }>;
 }
 
@@ -69,6 +69,7 @@ export default function TreeCanvas({
   lastMousePos
 }: TreeCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   return (
     <>
@@ -119,7 +120,10 @@ export default function TreeCanvas({
             ref={containerRef}
             className="flex-1 relative cursor-default overflow-hidden"
             onWheel={onWheel}
-            onMouseDown={onMouseDown}
+            onMouseDown={(e) => {
+              setActiveMenu(null);
+              onMouseDown(e);
+            }}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
@@ -186,6 +190,7 @@ export default function TreeCanvas({
                   const bgColor = isMale ? 'bg-blue-50' : 'bg-pink-50';
                   const iconColor = isMale ? 'text-blue-400' : 'text-pink-400';
                   const selected = selectedId === node.id;
+                  const menuOpen = activeMenu === node.id;
 
                   return (
                     <div
@@ -194,7 +199,7 @@ export default function TreeCanvas({
                       style={{
                         left: node.x,
                         top: node.y,
-                        zIndex: selected ? 50 : 10,
+                        zIndex: selected ? 50 : menuOpen ? 60 : 10,
                         cursor: 'grab'
                       }}
                       onMouseDown={(e) => onNodeDragStart(e, node.id)}
@@ -214,54 +219,117 @@ export default function TreeCanvas({
                           selected ? 'ring-2 ring-primary shadow-xl' : ''
                         }`}
                       >
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                          <button
-                            title="Добавить родителя"
-                            className="bg-foreground text-background rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary shadow-lg hover:scale-110 transition"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onAddRelative(node.id, 'parent');
-                            }}
-                          >
-                            <Icon name="Plus" size={14} />
-                          </button>
-                        </div>
                         <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                           <button
-                            title="Добавить ребенка"
+                            title="Добавить родственника"
                             className="bg-foreground text-background rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary shadow-lg hover:scale-110 transition"
                             onClick={(e) => {
                               e.stopPropagation();
-                              onAddRelative(node.id, 'child');
+                              setActiveMenu(menuOpen ? null : node.id);
                             }}
                           >
                             <Icon name="Plus" size={14} />
                           </button>
                         </div>
-                        <div className="absolute top-1/2 -left-3 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                          <button
-                            title="Добавить брата/сестру"
-                            className="bg-foreground text-background rounded-full w-6 h-6 flex items-center justify-center hover:bg-primary shadow-lg hover:scale-110 transition"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onAddRelative(node.id, 'sibling');
-                            }}
-                          >
-                            <Icon name="Users" size={12} />
-                          </button>
-                        </div>
-                        <div className="absolute top-1/2 -right-3 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                          <button
-                            title="Добавить супруга"
-                            className="bg-rose-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-rose-600 shadow-lg hover:scale-110 transition"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onAddRelative(node.id, 'spouse');
-                            }}
-                          >
-                            <Icon name="Heart" size={12} />
-                          </button>
-                        </div>
+
+                        {menuOpen && (
+                          <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-xl border border-border p-2 min-w-[140px] z-30">
+                            <div className="space-y-1">
+                              {node.gender === 'male' && (
+                                <button
+                                  className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddRelative(node.id, 'spouse', 'female');
+                                    setActiveMenu(null);
+                                  }}
+                                >
+                                  <Icon name="Heart" size={14} className="text-pink-500" />
+                                  Жена
+                                </button>
+                              )}
+                              {node.gender === 'female' && (
+                                <button
+                                  className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddRelative(node.id, 'spouse', 'male');
+                                    setActiveMenu(null);
+                                  }}
+                                >
+                                  <Icon name="Heart" size={14} className="text-blue-500" />
+                                  Муж
+                                </button>
+                              )}
+                              <button
+                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onAddRelative(node.id, 'sibling', 'male');
+                                  setActiveMenu(null);
+                                }}
+                              >
+                                <Icon name="User" size={14} className="text-blue-500" />
+                                Брат
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onAddRelative(node.id, 'sibling', 'female');
+                                  setActiveMenu(null);
+                                }}
+                              >
+                                <Icon name="User" size={14} className="text-pink-500" />
+                                Сестра
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onAddRelative(node.id, 'child', 'male');
+                                  setActiveMenu(null);
+                                }}
+                              >
+                                <Icon name="Baby" size={14} className="text-blue-500" />
+                                Сын
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onAddRelative(node.id, 'child', 'female');
+                                  setActiveMenu(null);
+                                }}
+                              >
+                                <Icon name="Baby" size={14} className="text-pink-500" />
+                                Дочь
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onAddRelative(node.id, 'parent', 'male');
+                                  setActiveMenu(null);
+                                }}
+                              >
+                                <Icon name="User" size={14} className="text-blue-500" />
+                                Отец
+                              </button>
+                              <button
+                                className="w-full text-left px-3 py-2 hover:bg-muted rounded text-sm flex items-center gap-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onAddRelative(node.id, 'parent', 'female');
+                                  setActiveMenu(null);
+                                }}
+                              >
+                                <Icon name="User" size={14} className="text-pink-500" />
+                                Мать
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         <div className="flex items-center gap-3 select-none">
                           <div

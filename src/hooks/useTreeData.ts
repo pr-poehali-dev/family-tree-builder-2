@@ -118,9 +118,29 @@ export function useTreeData(currentView: string) {
     };
   }, [nodes, edges, currentView, saveTreeToDatabase]);
 
-  const addRelative = (sourceId: string, type: string) => {
+  const addRelative = (sourceId: string, type: string, gender?: 'male' | 'female') => {
     const sourceNode = nodes.find((n) => n.id === sourceId);
     if (!sourceNode) return;
+
+    if (type === 'parent') {
+      const existingParents = edges
+        .filter((e) => e.target === sourceId && e.type !== 'spouse')
+        .map((e) => nodes.find((n) => n.id === e.source))
+        .filter(Boolean) as FamilyNode[];
+
+      if (existingParents.length >= 2) {
+        alert('У этого человека уже есть два родителя!');
+        return;
+      }
+
+      if (existingParents.length === 1) {
+        const existingParent = existingParents[0];
+        if (existingParent.gender === gender) {
+          alert('Нельзя добавить второго родителя того же пола!');
+          return;
+        }
+      }
+    }
 
     const newId = Date.now().toString();
     let newX = sourceNode.x;
@@ -128,20 +148,70 @@ export function useTreeData(currentView: string) {
     const newLastName = sourceNode.lastName;
 
     if (type === 'parent') {
-      newY -= 180;
-      newX += Math.random() * 60 - 30;
+      const existingParents = edges
+        .filter((e) => e.target === sourceId && e.type !== 'spouse')
+        .map((e) => nodes.find((n) => n.id === e.source))
+        .filter(Boolean) as FamilyNode[];
+
+      if (existingParents.length === 0) {
+        newX -= 110;
+        newY -= 180;
+      } else {
+        const firstParent = existingParents[0];
+        newX = firstParent.x + 220;
+        newY = firstParent.y;
+      }
     } else if (type === 'child') {
-      newY += 180;
-      newX += Math.random() * 60 - 30;
+      const childrenOfSource = edges
+        .filter((e) => e.source === sourceId && e.type !== 'spouse')
+        .map((e) => nodes.find((n) => n.id === e.target))
+        .filter(Boolean) as FamilyNode[];
+
+      if (childrenOfSource.length > 0) {
+        const rightmostChild = childrenOfSource.reduce((max, child) => 
+          child.x > max.x ? child : max
+        );
+        newX = rightmostChild.x + 220;
+        newY = rightmostChild.y;
+      } else {
+        newY += 180;
+      }
     } else if (type === 'sibling') {
-      newX -= 220;
+      const siblingsOfSource = edges
+        .filter((e) => {
+          const parentEdges = edges.filter((pe) => pe.target === sourceId && pe.type !== 'spouse');
+          return parentEdges.some((pe) => pe.source === e.source) && e.target !== sourceId;
+        })
+        .map((e) => nodes.find((n) => n.id === e.target))
+        .filter(Boolean) as FamilyNode[];
+
+      const allSiblings = [...siblingsOfSource, sourceNode];
+      const rightmostSibling = allSiblings.reduce((max, sib) => 
+        sib.x > max.x ? sib : max
+      );
+      newX = rightmostSibling.x + 220;
+      newY = sourceNode.y;
     } else if (type === 'spouse') {
-      newX += 220;
+      const existingSpouses = edges
+        .filter((e) => e.type === 'spouse' && (e.source === sourceId || e.target === sourceId))
+        .map((e) => {
+          const spouseId = e.source === sourceId ? e.target : e.source;
+          return nodes.find((n) => n.id === spouseId);
+        })
+        .filter(Boolean) as FamilyNode[];
+
+      if (existingSpouses.length > 0) {
+        const rightmostSpouse = existingSpouses.reduce((max, spouse) => 
+          spouse.x > max.x ? spouse : max
+        );
+        newX = rightmostSpouse.x + 220;
+      } else {
+        newX += 220;
+      }
+      newY = sourceNode.y;
     }
 
-    let newGender: 'male' | 'female' = sourceNode.gender;
-    if (type === 'spouse') newGender = sourceNode.gender === 'male' ? 'female' : 'male';
-    else if (type === 'parent') newGender = 'male';
+    const newGender: 'male' | 'female' = gender || sourceNode.gender;
 
     const newNode: FamilyNode = {
       id: newId,
@@ -168,26 +238,28 @@ export function useTreeData(currentView: string) {
     const newEdgesList: Edge[] = [];
 
     if (type === 'sibling') {
-      const parentEdges = edges.filter((e) => e.target === sourceId);
+      const parentEdges = edges.filter((e) => e.target === sourceId && e.type !== 'spouse');
       if (parentEdges.length > 0) {
         parentEdges.forEach((pe) =>
-          newEdgesList.push({ id: `e-${Date.now()}-${pe.source}`, source: pe.source, target: newId })
+          newEdgesList.push({ id: `e-${Date.now()}-${pe.source}-${Math.random()}`, source: pe.source, target: newId })
         );
       }
     } else if (type === 'spouse') {
-      newEdgesList.push({ id: `e-${Date.now()}`, source: sourceId, target: newId, type: 'spouse' });
+      newEdgesList.push({ id: `e-spouse-${Date.now()}-${Math.random()}`, source: sourceId, target: newId, type: 'spouse' });
     } else {
       newEdgesList.push({
-        id: `e-${Date.now()}`,
+        id: `e-${Date.now()}-${Math.random()}`,
         source: type === 'child' ? sourceId : newId,
         target: type === 'child' ? newId : sourceId
       });
 
       if (type === 'parent') {
-        const otherParents = edges.filter((e) => e.target === sourceId).map((e) => e.source);
+        const otherParents = edges
+          .filter((e) => e.target === sourceId && e.type !== 'spouse')
+          .map((e) => e.source);
         if (otherParents.length > 0) {
           const spouseId = otherParents[0];
-          newEdgesList.push({ id: `e-spouse-${Date.now()}`, source: spouseId, target: newId, type: 'spouse' });
+          newEdgesList.push({ id: `e-spouse-${Date.now()}-${Math.random()}`, source: spouseId, target: newId, type: 'spouse' });
         }
       }
     }
