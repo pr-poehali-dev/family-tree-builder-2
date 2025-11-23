@@ -21,25 +21,37 @@ export default function Index() {
     localStorage.removeItem('session_token');
     localStorage.removeItem('user_data');
     localStorage.removeItem('last_view');
+    localStorage.removeItem('last_activity');
     setCurrentView('landing');
+  };
+
+  const updateActivity = () => {
+    localStorage.setItem('last_activity', Date.now().toString());
   };
 
   useEffect(() => {
     const sessionTokenData = localStorage.getItem('session_token');
     const userData = localStorage.getItem('user_data');
+    const lastActivity = localStorage.getItem('last_activity');
     
     if (sessionTokenData && userData) {
       try {
         const parsedUserData = JSON.parse(userData);
         const parsedSessionData = JSON.parse(sessionTokenData);
         
-        if (parsedSessionData.expiresAt && Date.now() > parsedSessionData.expiresAt) {
-          handleLogout();
-          setIsAuthChecked(true);
-          return;
+        if (lastActivity) {
+          const timeSinceLastActivity = Date.now() - parseInt(lastActivity);
+          const SESSION_TIMEOUT = 40 * 60 * 1000;
+          
+          if (timeSinceLastActivity > SESSION_TIMEOUT) {
+            handleLogout();
+            setIsAuthChecked(true);
+            return;
+          }
         }
         
         if (parsedUserData && parsedUserData.email) {
+          updateActivity();
           const savedView = localStorage.getItem('last_view');
           if (savedView && (savedView === 'tree' || savedView === 'dashboard')) {
             setCurrentView(savedView as 'tree' | 'dashboard');
@@ -55,6 +67,37 @@ export default function Index() {
     
     setIsAuthChecked(true);
   }, []);
+
+  useEffect(() => {
+    if (currentView === 'landing' || currentView === 'onboarding') return;
+
+    updateActivity();
+
+    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    
+    activityEvents.forEach(event => {
+      window.addEventListener(event, updateActivity);
+    });
+
+    const checkInactivity = setInterval(() => {
+      const lastActivity = localStorage.getItem('last_activity');
+      if (lastActivity) {
+        const timeSinceLastActivity = Date.now() - parseInt(lastActivity);
+        const SESSION_TIMEOUT = 40 * 60 * 1000;
+        
+        if (timeSinceLastActivity > SESSION_TIMEOUT) {
+          handleLogout();
+        }
+      }
+    }, 60000);
+
+    return () => {
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, updateActivity);
+      });
+      clearInterval(checkInactivity);
+    };
+  }, [currentView]);
 
   useEffect(() => {
     if (currentView === 'tree' || currentView === 'dashboard') {

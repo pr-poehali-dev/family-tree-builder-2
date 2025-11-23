@@ -51,12 +51,9 @@ export default function AuthModal({ isOpen, mode, onClose, onSuccess, onSwitchMo
         return;
       }
 
-      const sessionData = {
-        token: data.session_token,
-        expiresAt: Date.now() + (40 * 60 * 1000)
-      };
-      localStorage.setItem('session_token', JSON.stringify(sessionData));
+      localStorage.setItem('session_token', data.session_token);
       localStorage.setItem('user_data', JSON.stringify(data));
+      localStorage.setItem('last_activity', Date.now().toString());
       onSuccess(data.session_token, data);
     } catch (err) {
       setError('Ошибка соединения с сервером');
