@@ -1,11 +1,23 @@
 import React from 'react';
 import Icon from '@/components/ui/icon';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-export default function EmptyTreeState() {
+interface EmptyTreeStateProps {
+  onClose: () => void;
+}
+
+export default function EmptyTreeState({ onClose }: EmptyTreeStateProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-      <Card className="max-w-md p-8 pointer-events-auto">
+      <Card className="max-w-md p-8 pointer-events-auto relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+          title="Закрыть"
+        >
+          <Icon name="X" size={20} />
+        </button>
         <div className="text-center">
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Icon name="TreePine" size={40} className="text-primary" />
@@ -50,6 +62,15 @@ export default function EmptyTreeState() {
               </div>
             </div>
           </div>
+          
+          <Button 
+            onClick={onClose}
+            className="w-full mt-6"
+            size="lg"
+          >
+            <Icon name="Check" size={20} className="mr-2" />
+            Понятно
+          </Button>
         </div>
       </Card>
     </div>

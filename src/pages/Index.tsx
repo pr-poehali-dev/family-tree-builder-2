@@ -14,6 +14,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export default function Index() {
   const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree' | 'dashboard'>('landing');
+  const [showWelcome, setShowWelcome] = useState(true);
 
   const {
     nodes,
@@ -163,7 +164,7 @@ export default function Index() {
       </div>
 
       <div className="flex h-[calc(100vh-64px)] overflow-hidden relative bg-muted/30 select-none">
-        {nodes.length === 1 && !selectedId && <EmptyTreeState />}
+        {nodes.length === 1 && !selectedId && showWelcome && <EmptyTreeState onClose={() => setShowWelcome(false)} />}
         
         <TreeCanvas
           nodes={nodes}
