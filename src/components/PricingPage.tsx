@@ -26,8 +26,8 @@ export default function PricingPage({ onStart }: PricingPageProps) {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <Card className="p-8 hover:shadow-xl transition-all border-2">
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+          <Card className="p-8 hover:shadow-xl transition-all border-2 lg:col-span-1 md:col-span-2">
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <Icon name="Star" size={24} className="text-primary" />
@@ -107,8 +107,63 @@ export default function PricingPage({ onStart }: PricingPageProps) {
             </Button>
           </Card>
 
-          <Card className="p-8 hover:shadow-2xl transition-all border-2 border-primary bg-gradient-to-br from-primary/5 to-accent/5 relative overflow-hidden">
-            <div className="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold">
+          <Card className="p-8 hover:shadow-xl transition-all border-2">
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon name="Crown" size={24} className="text-primary" />
+                <h3 className="text-2xl font-bold text-foreground">Премиум</h3>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Месяц
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-5xl font-black text-foreground">490</span>
+                <span className="text-xl font-semibold text-muted-foreground">₽</span>
+              </div>
+              <p className="text-sm text-muted-foreground">за месяц</p>
+            </div>
+
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Безлимитное древо</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Совместная работа</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Умные алгоритмы</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Все курсы</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Экспорт HD + GEDCOM</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Безлимитное хранилище</span>
+              </div>
+            </div>
+
+            <Button 
+              onClick={onStart}
+              variant="outline"
+              className="w-full text-lg py-6 border-2 hover:border-primary hover:bg-primary/5"
+            >
+              Выбрать план
+            </Button>
+          </Card>
+
+          <Card className="p-8 hover:shadow-xl transition-all border-2 border-primary/50 relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold">
               ПОПУЛЯРНЫЙ
             </div>
 
@@ -118,106 +173,119 @@ export default function PricingPage({ onStart }: PricingPageProps) {
                 <h3 className="text-2xl font-bold text-foreground">Премиум</h3>
               </div>
               <p className="text-muted-foreground text-sm">
-                Полный доступ ко всем возможностям
+                Полгода
               </p>
             </div>
 
             <div className="mb-8">
-              <div className="space-y-3">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-black text-foreground">490</span>
-                  <span className="text-2xl font-semibold text-muted-foreground">₽/мес</span>
-                </div>
-                
-                <div className="flex items-baseline gap-1 text-sm">
-                  <span className="text-2xl font-bold text-foreground">2 490</span>
-                  <span className="text-muted-foreground">₽ за 6 месяцев</span>
-                  <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">-17%</span>
-                </div>
-                
-                <div className="flex items-baseline gap-1 text-sm">
-                  <span className="text-2xl font-bold text-foreground">3 990</span>
-                  <span className="text-muted-foreground">₽ в год</span>
-                  <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">-33%</span>
-                </div>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-5xl font-black text-foreground">2 490</span>
+                <span className="text-xl font-semibold text-muted-foreground">₽</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground line-through">2 940 ₽</p>
+                <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">-17%</span>
               </div>
             </div>
 
-            <div className="space-y-4 mb-8">
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon name="Check" size={14} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Безлимитное древо</div>
-                  <div className="text-sm text-muted-foreground">Тысячи родственников без ограничений</div>
-                </div>
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Безлимитное древо</span>
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon name="Check" size={14} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground flex items-center gap-2">
-                    Совместная работа
-                    <span className="px-2 py-0.5 bg-primary/20 text-primary rounded text-xs font-bold">NEW</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground">Приглашайте родственников для редактирования в реальном времени</div>
-                </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Совместная работа</span>
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon name="Check" size={14} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Умные алгоритмы</div>
-                  <div className="text-sm text-muted-foreground">Проверка логики связей и автопоиск дублей</div>
-                </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Умные алгоритмы</span>
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon name="Check" size={14} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Полный доступ к курсам</div>
-                  <div className="text-sm text-muted-foreground">Все обучающие материалы по генеалогии</div>
-                </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Все курсы</span>
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon name="Check" size={14} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Профессиональный экспорт</div>
-                  <div className="text-sm text-muted-foreground">Высокое разрешение для печати + формат GEDCOM</div>
-                </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Экспорт HD + GEDCOM</span>
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon name="Check" size={14} className="text-white" />
-                </div>
-                <div>
-                  <div className="font-semibold text-foreground">Безлимитное хранилище</div>
-                  <div className="text-sm text-muted-foreground">Фото, видео, документы без ограничений</div>
-                </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground">Безлимитное хранилище</span>
               </div>
             </div>
 
             <Button 
               onClick={onStart}
-              className="w-full text-lg py-6 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40"
+              className="w-full text-lg py-6 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+            >
+              Выбрать план
+            </Button>
+          </Card>
+
+          <Card className="p-8 hover:shadow-2xl transition-all border-2 border-primary bg-gradient-to-br from-primary/5 to-accent/5 relative overflow-hidden">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+              ВЫГОДНЕЕ ВСЕГО
+            </div>
+
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon name="Crown" size={24} className="text-primary" />
+                <h3 className="text-2xl font-bold text-foreground">Премиум</h3>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                Год
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className="text-5xl font-black text-foreground">3 990</span>
+                <span className="text-xl font-semibold text-muted-foreground">₽</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground line-through">5 880 ₽</p>
+                <span className="px-2 py-0.5 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-xs font-bold">-33%</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground font-semibold">Безлимитное древо</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground font-semibold">Совместная работа</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground font-semibold">Умные алгоритмы</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground font-semibold">Все курсы</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground font-semibold">Экспорт HD + GEDCOM</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Icon name="Check" size={16} className="text-primary flex-shrink-0" />
+                <span className="text-foreground font-semibold">Безлимитное хранилище</span>
+              </div>
+            </div>
+
+            <Button 
+              onClick={onStart}
+              className="w-full text-lg py-6 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 bg-gradient-to-r from-primary to-accent hover:opacity-90"
             >
               <Icon name="Zap" size={20} className="mr-2" />
-              Попробовать Премиум
+              Выбрать план
             </Button>
 
             <p className="text-center text-xs text-muted-foreground mt-4">
-              14 дней бесплатно, отмена в любое время
+              Всего 333 ₽/мес при оплате за год
             </p>
           </Card>
         </div>
