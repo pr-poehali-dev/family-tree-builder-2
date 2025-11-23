@@ -5,6 +5,7 @@ import HomePage from '@/components/HomePage';
 import LearningPage from '@/components/LearningPage';
 import ArchivesPage from '@/components/ArchivesPage';
 import SupportPage from '@/components/SupportPage';
+import PricingPage from '@/components/PricingPage';
 import AuthModal from '@/components/AuthModal';
 
 interface LandingPageProps {
@@ -12,7 +13,7 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ onStart }: LandingPageProps) {
-  const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support'>('home');
+  const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support' | 'pricing'>('home');
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'register'>('login');
 
@@ -34,6 +35,9 @@ export default function LandingPage({ onStart }: LandingPageProps) {
             </button>
             <button onClick={onStart} className="hover:text-primary transition-all">
               Древо
+            </button>
+            <button onClick={() => setCurrentPage('pricing')} className={`hover:text-primary transition-all ${currentPage === 'pricing' ? 'text-primary font-semibold' : ''}`}>
+              Тарифы
             </button>
             <button onClick={() => setCurrentPage('learning')} className={`hover:text-primary transition-all ${currentPage === 'learning' ? 'text-primary font-semibold' : ''}`}>
               Обучение
@@ -64,6 +68,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
       </header>
 
       {currentPage === 'home' && <HomePage onStart={onStart} />}
+      {currentPage === 'pricing' && <PricingPage onStart={onStart} />}
       {currentPage === 'learning' && <LearningPage />}
       {currentPage === 'archives' && <ArchivesPage />}
       {currentPage === 'support' && <SupportPage />}
