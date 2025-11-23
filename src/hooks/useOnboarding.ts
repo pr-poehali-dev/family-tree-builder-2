@@ -6,16 +6,16 @@ const INITIAL_NODES: FamilyNode[] = [
     id: 'root',
     x: 400,
     y: 300,
-    firstName: 'Иван',
-    lastName: 'Иванов',
-    middleName: 'Иванович',
+    firstName: '',
+    lastName: '',
+    middleName: '',
     maidenName: '',
     gender: 'male',
-    birthDate: '1990',
-    birthPlace: 'Москва',
+    birthDate: '',
+    birthPlace: '',
     deathDate: '',
     deathPlace: '',
-    occupation: 'Программист',
+    occupation: '',
     isAlive: true,
     relation: 'self',
     bio: '',
@@ -63,14 +63,23 @@ export function useOnboarding(
       if (formData.fatherName) {
         const fatherId = 'father';
         newNodes.push({
-          ...INITIAL_NODES[0],
           id: fatherId,
           x: 250,
           y: 150,
           firstName: formData.fatherName,
           lastName: formData.lastName,
+          middleName: '',
+          maidenName: '',
           gender: 'male',
-          relation: 'parent'
+          birthDate: '',
+          birthPlace: '',
+          deathDate: '',
+          deathPlace: '',
+          occupation: '',
+          isAlive: true,
+          relation: 'parent',
+          bio: '',
+          historyContext: ''
         });
         newEdges.push({ id: 'e1', source: fatherId, target: 'root' });
       }
@@ -78,14 +87,23 @@ export function useOnboarding(
       if (formData.motherName) {
         const motherId = 'mother';
         newNodes.push({
-          ...INITIAL_NODES[0],
           id: motherId,
           x: 550,
           y: 150,
           firstName: formData.motherName,
-          lastName: formData.lastName + 'а',
+          lastName: '',
+          middleName: '',
+          maidenName: '',
           gender: 'female',
-          relation: 'parent'
+          birthDate: '',
+          birthPlace: '',
+          deathDate: '',
+          deathPlace: '',
+          occupation: '',
+          isAlive: true,
+          relation: 'parent',
+          bio: '',
+          historyContext: ''
         });
         newEdges.push({ id: 'e2', source: motherId, target: 'root' });
       }
