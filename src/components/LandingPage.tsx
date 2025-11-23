@@ -11,12 +11,46 @@ import AuthModal from '@/components/AuthModal';
 
 interface LandingPageProps {
   onStart: () => void;
+  onGoToDashboard: () => void;
 }
 
-export default function LandingPage({ onStart }: LandingPageProps) {
+export default function LandingPage({ onStart, onGoToDashboard }: LandingPageProps) {
   const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support' | 'pricing' | 'demo'>('home');
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'register'>('login');
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [userData, setUserData] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const sessionToken = localStorage.getItem('session_token');
+    const storedUserData = localStorage.getItem('user_data');
+    
+    if (sessionToken && storedUserData) {
+      try {
+        const parsed = JSON.parse(storedUserData);
+        if (parsed && parsed.email) {
+          setIsAuthenticated(true);
+          setUserData(parsed);
+        }
+      } catch (e) {
+        console.error('Error parsing user data', e);
+      }
+    }
+  }, []);
+
+  const handleAuthSuccess = () => {
+    setAuthModalOpen(false);
+    const storedUserData = localStorage.getItem('user_data');
+    if (storedUserData) {
+      try {
+        const parsed = JSON.parse(storedUserData);
+        setIsAuthenticated(true);
+        setUserData(parsed);
+      } catch (e) {
+        console.error('Error parsing user data', e);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-primary/5 to-background overflow-y-auto">
@@ -51,20 +85,42 @@ export default function LandingPage({ onStart }: LandingPageProps) {
               Поддержка
             </button>
           </div>
-          <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => { setAuthMode('login'); setAuthModalOpen(true); }} 
-              className="border-primary/30 hover:border-primary hover:bg-primary/5"
-            >
-              Войти
-            </Button>
-            <Button 
-              onClick={() => { setAuthMode('register'); setAuthModalOpen(true); }} 
-              className="shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
-            >
-              Зарегистрироваться
-            </Button>
+          <div className="flex gap-3 items-center">
+            {isAuthenticated ? (
+              <>
+                <Button 
+                  onClick={onGoToDashboard}
+                  variant="outline"
+                  className="border-primary/30 hover:border-primary hover:bg-primary/5"
+                >
+                  <Icon name="LayoutDashboard" size={16} className="mr-2" />
+                  Личный кабинет
+                </Button>
+                <button
+                  onClick={onGoToDashboard}
+                  className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm cursor-pointer hover:bg-primary/20 transition-colors"
+                  title="Открыть профиль"
+                >
+                  {userData?.display_name?.[0]?.toUpperCase() || userData?.email?.[0]?.toUpperCase() || 'U'}
+                </button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => { setAuthMode('login'); setAuthModalOpen(true); }} 
+                  className="border-primary/30 hover:border-primary hover:bg-primary/5"
+                >
+                  Войти
+                </Button>
+                <Button 
+                  onClick={() => { setAuthMode('register'); setAuthModalOpen(true); }} 
+                  className="shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
+                >
+                  Зарегистрироваться
+                </Button>
+              </>
+            )}
           </div>
           </div>
         </header>
@@ -81,9 +137,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         isOpen={authModalOpen}
         mode={authMode}
         onClose={() => setAuthModalOpen(false)}
-        onSuccess={(sessionToken, userData) => {
-          setAuthModalOpen(false);
-        }}
+        onSuccess={handleAuthSuccess}
         onSwitchMode={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
       />
     </div>
