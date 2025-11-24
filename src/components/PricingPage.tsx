@@ -2,12 +2,23 @@ import React from 'react';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { sendGoal, Goals } from '@/utils/analytics';
 
 interface PricingPageProps {
   onStart: () => void;
 }
 
 export default function PricingPage({ onStart }: PricingPageProps) {
+  React.useEffect(() => {
+    // Отправляем цель просмотра тарифов
+    sendGoal(Goals.PRICING_VIEWED);
+  }, []);
+
+  const handlePlanSelect = (planName: string) => {
+    sendGoal(Goals.PLAN_SELECTED, { plan: planName });
+    onStart();
+  };
+
   return (
     <div className="pt-32 pb-24 px-6">
       <div className="max-w-7xl mx-auto">
@@ -99,7 +110,7 @@ export default function PricingPage({ onStart }: PricingPageProps) {
             </div>
 
             <Button 
-              onClick={onStart}
+              onClick={() => handlePlanSelect('Старт')}
               variant="outline" 
               className="w-full text-lg py-6 border-2 hover:border-primary hover:bg-primary/5"
             >
@@ -154,7 +165,7 @@ export default function PricingPage({ onStart }: PricingPageProps) {
             </div>
 
             <Button 
-              onClick={onStart}
+              onClick={() => handlePlanSelect('Премиум месяц')}
               variant="outline"
               className="w-full text-lg py-6 border-2 hover:border-primary hover:bg-primary/5"
             >
@@ -216,7 +227,7 @@ export default function PricingPage({ onStart }: PricingPageProps) {
             </div>
 
             <Button 
-              onClick={onStart}
+              onClick={() => handlePlanSelect('Премиум полгода')}
               className="w-full text-lg py-6 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
             >
               Выбрать план
@@ -277,7 +288,7 @@ export default function PricingPage({ onStart }: PricingPageProps) {
             </div>
 
             <Button 
-              onClick={onStart}
+              onClick={() => handlePlanSelect('Премиум год')}
               className="w-full text-lg py-6 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 bg-gradient-to-r from-primary to-accent hover:opacity-90"
             >
               <Icon name="Zap" size={20} className="mr-2" />

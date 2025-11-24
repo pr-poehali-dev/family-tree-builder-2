@@ -11,6 +11,7 @@ import { useTreeData } from '@/hooks/useTreeData';
 import { useCanvasInteraction } from '@/hooks/useCanvasInteraction';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { sendGoal, Goals } from '@/utils/analytics';
 
 export default function Index() {
   const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree' | 'dashboard'>('landing');
@@ -243,7 +244,10 @@ export default function Index() {
           <div className="w-px h-6 bg-border mx-1 md:mx-2"></div>
 
           <button 
-            onClick={() => setCurrentView('dashboard')}
+            onClick={() => {
+              setCurrentView('dashboard');
+              sendGoal(Goals.DASHBOARD_OPENED);
+            }}
             className="text-muted-foreground hover:text-primary transition-colors"
             title="Личный кабинет"
           >

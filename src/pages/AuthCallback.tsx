@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
+import { sendGoal, Goals } from '@/utils/analytics';
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -11,6 +12,9 @@ export default function AuthCallback() {
 
     if (sessionToken) {
       localStorage.setItem('session_token', sessionToken);
+      
+      // Отправляем цель успешной авторизации
+      sendGoal(Goals.LOGIN_SUCCESS);
       
       // Перенаправляем на главную страницу
       setTimeout(() => {

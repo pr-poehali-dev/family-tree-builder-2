@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { FamilyNode, Edge } from '@/components/TreeCanvas';
+import { sendGoal, Goals } from '@/utils/analytics';
 
 const INITIAL_NODES: FamilyNode[] = [
   {
@@ -64,6 +65,13 @@ export function useTreeData(currentView: string) {
       if (response.ok) {
         setCurrentTreeId(data.tree_id);
         localStorage.setItem('familyTree_treeId', data.tree_id.toString());
+        
+        // Отправляем цель первого сохранения
+        const isFirstSave = !currentTreeId;
+        if (isFirstSave) {
+          sendGoal(Goals.TREE_FIRST_SAVE);
+        }
+        
         setShowSuccessToast(true);
         setTimeout(() => setShowSuccessToast(false), 3000);
       } else {
@@ -278,6 +286,9 @@ export function useTreeData(currentView: string) {
 
     setEdges((prev) => [...prev, ...newEdgesList]);
     setSelectedId(newId);
+    
+    // Отправляем цель добавления человека
+    sendGoal(Goals.PERSON_ADDED, { relation: type });
   };
 
   const deleteNode = (id: string) => {
@@ -309,6 +320,9 @@ export function useTreeData(currentView: string) {
     a.href = url;
     a.download = 'familytree.json';
     a.click();
+    
+    // Отправляем цель экспорта
+    sendGoal(Goals.TREE_EXPORTED);
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -320,6 +334,9 @@ export function useTreeData(currentView: string) {
         const data = JSON.parse(e.target?.result as string);
         if (data.nodes && Array.isArray(data.nodes)) setNodes(data.nodes);
         if (data.edges && Array.isArray(data.edges)) setEdges(data.edges);
+        
+        // Отправляем цель импорта
+        sendGoal(Goals.TREE_IMPORTED);
       } catch (error) {
         alert('Ошибка при чтении файла: Неверный формат JSON');
       }

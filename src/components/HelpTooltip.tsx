@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from '@/components/ui/icon';
 import { Card } from '@/components/ui/card';
+import { sendGoal, Goals } from '@/utils/analytics';
 
 export default function HelpTooltip() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -8,7 +9,12 @@ export default function HelpTooltip() {
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!isOpen) {
+            sendGoal(Goals.HELP_OPENED);
+          }
+        }}
         className="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
         title="Горячие клавиши"
       >
