@@ -128,6 +128,32 @@ export default function TreePage() {
 
           <div className="w-px h-6 bg-border mx-1 md:mx-2"></div>
 
+          <button 
+            onClick={() => navigate('/tutorial')}
+            className="text-muted-foreground hover:text-primary transition-colors"
+            title="Обучение"
+          >
+            <Icon name="GraduationCap" size={20} />
+          </button>
+
+          <button 
+            onClick={() => navigate('/archive')}
+            className="text-muted-foreground hover:text-primary transition-colors"
+            title="Архивы"
+          >
+            <Icon name="Archive" size={20} />
+          </button>
+
+          <button 
+            onClick={() => navigate('/support')}
+            className="text-muted-foreground hover:text-primary transition-colors"
+            title="Поддержка"
+          >
+            <Icon name="HelpCircle" size={20} />
+          </button>
+
+          <div className="w-px h-6 bg-border mx-1 md:mx-2"></div>
+
           {showAdminButton && (
             <button 
               onClick={() => navigate('/admin')}

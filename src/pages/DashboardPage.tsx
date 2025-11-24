@@ -69,7 +69,29 @@ export default function DashboardPage() {
               <p className="text-sm text-muted-foreground">Ваш прогресс и достижения</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => navigate('/tutorial')}
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="Обучение"
+            >
+              <Icon name="GraduationCap" size={20} />
+            </button>
+            <button 
+              onClick={() => navigate('/archive')}
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="Архивы"
+            >
+              <Icon name="Archive" size={20} />
+            </button>
+            <button 
+              onClick={() => navigate('/support')}
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="Поддержка"
+            >
+              <Icon name="HelpCircle" size={20} />
+            </button>
+            <div className="w-px h-6 bg-border mx-2"></div>
             <div className="flex items-center gap-2 bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-2 rounded-lg border border-amber-200">
               <Icon name="Sparkles" size={18} className="text-amber-600" />
               <div className="text-sm">
