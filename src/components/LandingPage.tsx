@@ -1,10 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import HomePage from '@/components/HomePage';
-import LearningPage from '@/components/LearningPage';
-import ArchivesPage from '@/components/ArchivesPage';
-import SupportPage from '@/components/SupportPage';
 import PricingPage from '@/components/PricingPage';
 import DemoPage from '@/components/DemoPage';
 import AuthModal from '@/components/AuthModal';
@@ -16,7 +14,7 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({ onStart, onGoToDashboard, onGoToTree }: LandingPageProps) {
-  const [currentPage, setCurrentPage] = React.useState<'home' | 'learning' | 'archives' | 'support' | 'pricing' | 'demo'>('home');
+  const [currentPage, setCurrentPage] = React.useState<'home' | 'pricing' | 'demo'>('home');
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'register'>('login');
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -87,15 +85,6 @@ export default function LandingPage({ onStart, onGoToDashboard, onGoToTree }: La
             <button onClick={() => setCurrentPage('pricing')} className={`hover:text-primary transition-all ${currentPage === 'pricing' ? 'text-primary font-semibold' : ''}`}>
               Тарифы
             </button>
-            <button onClick={() => setCurrentPage('learning')} className={`hover:text-primary transition-all ${currentPage === 'learning' ? 'text-primary font-semibold' : ''}`}>
-              Обучение
-            </button>
-            <button onClick={() => setCurrentPage('archives')} className={`hover:text-primary transition-all ${currentPage === 'archives' ? 'text-primary font-semibold' : ''}`}>
-              Архивы
-            </button>
-            <button onClick={() => setCurrentPage('support')} className={`hover:text-primary transition-all ${currentPage === 'support' ? 'text-primary font-semibold' : ''}`}>
-              Поддержка
-            </button>
           </div>
           <div className="flex gap-3 items-center">
             {isAuthenticated ? (
@@ -140,9 +129,6 @@ export default function LandingPage({ onStart, onGoToDashboard, onGoToTree }: La
 
       {currentPage === 'home' && <HomePage onStart={onStart} onDemo={() => setCurrentPage('demo')} />}
       {currentPage === 'pricing' && <PricingPage onStart={onStart} />}
-      {currentPage === 'learning' && <LearningPage />}
-      {currentPage === 'archives' && <ArchivesPage />}
-      {currentPage === 'support' && <SupportPage />}
       {currentPage === 'demo' && <DemoPage onClose={() => setCurrentPage('home')} />}
 
       <AuthModal

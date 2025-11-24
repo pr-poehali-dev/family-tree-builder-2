@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 
@@ -8,6 +9,8 @@ interface HomePageProps {
 }
 
 export default function HomePage({ onStart, onDemo }: HomePageProps) {
+  const navigate = useNavigate();
+  
   return (
     <>
       <section className="pt-32 pb-24 px-6 relative overflow-hidden">
@@ -154,10 +157,13 @@ export default function HomePage({ onStart, onDemo }: HomePageProps) {
                 <a href="#features" className="block text-muted-foreground hover:text-primary transition-colors">
                   Возможности
                 </a>
-                <a href="#about" className="block text-muted-foreground hover:text-primary transition-colors">
-                  О проекте
-                </a>
-                <button onClick={onStart} className="block text-muted-foreground hover:text-primary transition-colors">
+                <button onClick={() => navigate('/tutorial')} className="block text-muted-foreground hover:text-primary transition-colors text-left">
+                  Обучение
+                </button>
+                <button onClick={() => navigate('/support')} className="block text-muted-foreground hover:text-primary transition-colors text-left">
+                  Поддержка
+                </button>
+                <button onClick={onStart} className="block text-muted-foreground hover:text-primary transition-colors text-left">
                   Начать работу
                 </button>
               </div>
