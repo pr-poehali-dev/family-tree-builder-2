@@ -12,11 +12,13 @@ import { useCanvasInteraction } from '@/hooks/useCanvasInteraction';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { sendGoal, Goals } from '@/utils/analytics';
+import { isAdmin } from '@/config/admins';
 
 export default function Index() {
   const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'tree' | 'dashboard'>('landing');
   const [showWelcome, setShowWelcome] = useState(true);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [showAdminButton, setShowAdminButton] = useState(false);
 
   const handleLogout = React.useCallback(() => {
     localStorage.removeItem('session_token');
@@ -52,6 +54,12 @@ export default function Index() {
         
         if (parsedUserData && parsedUserData.email) {
           updateActivity();
+          
+          // Проверяем права администратора
+          if (isAdmin(parsedUserData.email)) {
+            setShowAdminButton(true);
+          }
+          
           const savedView = localStorage.getItem('last_view');
           if (savedView && (savedView === 'tree' || savedView === 'dashboard')) {
             setCurrentView(savedView as 'tree' | 'dashboard');
@@ -242,6 +250,16 @@ export default function Index() {
           </button>
 
           <div className="w-px h-6 bg-border mx-1 md:mx-2"></div>
+
+          {showAdminButton && (
+            <button 
+              onClick={() => window.location.href = '/admin'}
+              className="text-muted-foreground hover:text-primary transition-colors"
+              title="Панель администратора"
+            >
+              <Icon name="Shield" size={20} />
+            </button>
+          )}
 
           <button 
             onClick={() => {
