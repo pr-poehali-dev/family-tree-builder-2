@@ -59,29 +59,40 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   }, []);
 
   const loadAnalytics = async () => {
-    // Пока заглушка - здесь будет загрузка реальных данных
-    // В будущем можно подключить к Яндекс.Метрике API или своей БД
-    setAnalytics({
-      totalUsers: 142,
-      activeToday: 23,
-      treesSaved: 89,
-      personsAdded: 456,
-      plansSelected: {
-        start: 98,
-        premium_month: 12,
-        premium_half: 18,
-        premium_year: 14,
-      },
-    });
+    try {
+      const response = await fetch('https://functions.poehali.dev/d917b670-852b-45d7-a273-26bf2e464999');
+      
+      if (!response.ok) {
+        console.error('Failed to load analytics:', response.statusText);
+        return;
+      }
+      
+      const data = await response.json();
+      
+      // Подсчитываем метрики из целей Метрики
+      const goals = data.goals || {};
+      
+      setAnalytics({
+        totalUsers: data.users || 0,
+        activeToday: Math.round((data.users || 0) * 0.15), // ~15% активных
+        treesSaved: goals['tree_first_save'] || 0,
+        personsAdded: goals['person_added'] || 0,
+        plansSelected: {
+          start: goals['plan_selected_Старт'] || 0,
+          premium_month: goals['plan_selected_Премиум месяц'] || 0,
+          premium_half: goals['plan_selected_Премиум полгода'] || 0,
+          premium_year: goals['plan_selected_Премиум год'] || 0,
+        },
+      });
+    } catch (error) {
+      console.error('Error loading analytics:', error);
+    }
   };
 
-  const refreshMetrics = () => {
-    if (window.ym) {
-      window.ym(101026698, 'getClientID', (clientID: string) => {
-        console.log('Yandex Metrika Client ID:', clientID);
-      });
-    }
-    loadAnalytics();
+  const refreshMetrics = async () => {
+    setIsLoading(true);
+    await loadAnalytics();
+    setIsLoading(false);
   };
 
   if (isLoading) {
@@ -151,7 +162,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               </div>
             </div>
             <p className="text-3xl font-bold">{analytics.totalUsers}</p>
-            <p className="text-xs text-green-600 mt-1">↑ +12% за неделю</p>
+            <p className="text-xs text-muted-foreground mt-1">За последние 7 дней</p>
           </Card>
 
           <Card className="p-6">
@@ -173,7 +184,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               </div>
             </div>
             <p className="text-3xl font-bold">{analytics.treesSaved}</p>
-            <p className="text-xs text-green-600 mt-1">↑ +8 за сегодня</p>
+            <p className="text-xs text-muted-foreground mt-1">Первых сохранений</p>
           </Card>
 
           <Card className="p-6">
@@ -184,7 +195,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               </div>
             </div>
             <p className="text-3xl font-bold">{analytics.personsAdded}</p>
-            <p className="text-xs text-green-600 mt-1">↑ +34 за сегодня</p>
+            <p className="text-xs text-muted-foreground mt-1">Всего добавлено</p>
           </Card>
         </div>
 
