@@ -7,83 +7,161 @@ import { Button } from '@/components/ui/button';
 export default function TutorialPage() {
   const navigate = useNavigate();
 
-  const tutorials = [
+  const courses = [
     {
       id: 1,
-      title: 'Создание первого древа',
-      description: 'Узнайте, как начать работу и создать ваше первое генеалогическое древо',
-      icon: 'TreePine',
-      duration: '5 мин',
-      steps: [
-        'Войдите в систему через Яндекс ID',
-        'Заполните информацию о себе',
-        'Добавьте родителей через кнопку "+"',
-        'Сохраните древо кнопкой "Сохранить"'
+      title: 'Введение в генеалогию',
+      description: 'Основы генеалогического исследования, терминология и методология',
+      icon: 'BookOpen',
+      duration: '20 мин',
+      topics: [
+        'Что такое генеалогия и зачем она нужна',
+        'Основные понятия: поколения, степени родства',
+        'Прямые и боковые линии родства',
+        'Восходящее и нисходящее древо'
       ]
     },
     {
       id: 2,
-      title: 'Добавление родственников',
-      description: 'Как добавлять родителей, детей, супругов и других родственников',
-      icon: 'UserPlus',
-      duration: '3 мин',
-      steps: [
-        'Выберите узел на древе',
-        'Нажмите кнопку "+" рядом с узлом',
-        'Выберите тип родства',
-        'Заполните данные родственника'
+      title: 'Источники информации',
+      description: 'Где искать сведения о предках: документы, архивы, базы данных',
+      icon: 'Search',
+      duration: '30 мин',
+      topics: [
+        'Семейные документы и фотоальбомы',
+        'Метрические книги и ревизские сказки',
+        'Государственные архивы России',
+        'Онлайн-базы данных и оцифрованные архивы'
       ]
     },
     {
       id: 3,
-      title: 'Работа с фотографиями',
-      description: 'Добавление и управление фотографиями членов семьи',
-      icon: 'Image',
-      duration: '2 мин',
-      steps: [
-        'Кликните на узел персоны',
-        'В правой панели нажмите "Загрузить фото"',
-        'Выберите изображение с компьютера',
-        'Фото автоматически сохранится'
+      title: 'Работа с архивами',
+      description: 'Как правильно делать запросы в архивы и интерпретировать документы',
+      icon: 'FileText',
+      duration: '25 мин',
+      topics: [
+        'Подготовка запроса в архив',
+        'Чтение старых документов и почерков',
+        'Церковнославянский язык в документах',
+        'Работа с метрическими книгами'
       ]
     },
     {
       id: 4,
-      title: 'Навигация по древу',
-      description: 'Управление холстом, масштабирование и перемещение',
-      icon: 'Move',
-      duration: '2 мин',
-      steps: [
-        'Зажмите левую кнопку мыши для перемещения',
-        'Используйте колесико мыши для масштабирования',
-        'Двойной клик на узел для фокуса',
-        'Кнопка "Home" возвращает в центр'
+      title: 'Датировка и хронология',
+      description: 'Работа с историческими датами, календарями и временными периодами',
+      icon: 'Calendar',
+      duration: '15 мин',
+      topics: [
+        'Юлианский и григорианский календари',
+        'Старый и новый стиль дат в России',
+        'Расчет возраста по датам в документах',
+        'Определение примерных дат по косвенным данным'
       ]
     },
     {
       id: 5,
-      title: 'Экспорт и импорт',
-      description: 'Сохранение древа на компьютер и загрузка резервных копий',
-      icon: 'Download',
-      duration: '2 мин',
-      steps: [
-        'Нажмите иконку "Скачать" в верхней панели',
-        'Древо сохранится в формате JSON',
-        'Для загрузки нажмите иконку "Загрузить"',
-        'Выберите ранее сохраненный файл'
+      title: 'Родословная роспись',
+      description: 'Составление систематического описания рода по поколениям',
+      icon: 'GitBranch',
+      duration: '20 мин',
+      topics: [
+        'Восходящая родословная (от себя к предкам)',
+        'Нисходящая родословная (от предка к потомкам)',
+        'Смешанная родословная роспись',
+        'Нумерация поколений и персон'
       ]
     },
     {
       id: 6,
-      title: 'Горячие клавиши',
-      description: 'Ускорьте работу с помощью клавиатурных сокращений',
-      icon: 'Keyboard',
-      duration: '1 мин',
-      steps: [
-        'Ctrl+S / Cmd+S - Быстрое сохранение',
-        'Delete / Backspace - Удалить выбранный узел',
-        'Esc - Снять выделение',
-        'D - Открыть личный кабинет'
+      title: 'Дворянские роды',
+      description: 'Особенности исследования дворянских родословных',
+      icon: 'Crown',
+      duration: '25 мин',
+      topics: [
+        'Дворянские родословные книги',
+        'Гербовники и геральдика',
+        'Формулярные списки и послужные списки',
+        'Российский Дворянский Собор и современная геральдика'
+      ]
+    },
+    {
+      id: 7,
+      title: 'Крестьянские роды',
+      description: 'Исследование родословной крестьян и мещан',
+      icon: 'Home',
+      duration: '30 мин',
+      topics: [
+        'Ревизские сказки (ревизии населения)',
+        'Исповедальные ведомости приходов',
+        'Посемейные списки XIX века',
+        'Податные документы и рекрутские списки'
+      ]
+    },
+    {
+      id: 8,
+      title: 'Купеческие роды',
+      description: 'Генеалогия купцов, промышленников и почетных граждан',
+      icon: 'Building',
+      duration: '20 мин',
+      topics: [
+        'Гильдейские свидетельства',
+        'Почетное гражданство',
+        'Торговые дома и фирмы',
+        'Документы торгово-промышленных архивов'
+      ]
+    },
+    {
+      id: 9,
+      title: 'ДНК-генеалогия',
+      description: 'Использование генетических данных в генеалогических исследованиях',
+      icon: 'Activity',
+      duration: '25 мин',
+      topics: [
+        'Y-ДНК и митохондриальная ДНК',
+        'Гаплогруппы и их распространение',
+        'Этническое происхождение по ДНК',
+        'ДНК-тесты для поиска родственников'
+      ]
+    },
+    {
+      id: 10,
+      title: 'Оформление родословной',
+      description: 'Как красиво представить результаты исследования',
+      icon: 'PenTool',
+      duration: '15 мин',
+      topics: [
+        'Генеалогические таблицы и схемы',
+        'Родословное древо: виды и формы',
+        'Оформление родословной книги',
+        'Цифровые форматы и веб-публикации'
+      ]
+    },
+    {
+      id: 11,
+      title: 'Региональная специфика',
+      description: 'Особенности исследований в разных регионах России',
+      icon: 'Map',
+      duration: '20 мин',
+      topics: [
+        'Казачьи роды и войсковые архивы',
+        'Старообрядческие семьи',
+        'Народы Поволжья и Сибири',
+        'Переселенцы и эмигранты'
+      ]
+    },
+    {
+      id: 12,
+      title: 'Профессиональная генеалогия',
+      description: 'Как стать профессиональным генеалогом',
+      icon: 'Award',
+      duration: '15 мин',
+      topics: [
+        'Генеалогическое образование в России',
+        'Профессиональные генеалогические общества',
+        'Этика генеалогических исследований',
+        'Платные генеалогические услуги'
       ]
     }
   ];
@@ -99,7 +177,7 @@ export default function TutorialPage() {
             <Icon name="ArrowLeft" size={20} />
           </button>
           <div className="font-bold text-primary flex items-center gap-2">
-            <Icon name="GraduationCap" /> Обучение
+            <Icon name="GraduationCap" /> Курсы по генеалогии
           </div>
         </div>
         <Button onClick={() => navigate('/tree')} variant="outline">
@@ -110,34 +188,34 @@ export default function TutorialPage() {
 
       <div className="max-w-6xl mx-auto p-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Обучающие материалы</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4">Обучающие материалы по генеалогии</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Пошаговые инструкции помогут вам освоить все возможности платформы
+            Изучите основы генеалогического исследования и научитесь составлять родословную своей семьи
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tutorials.map((tutorial) => (
-            <Card key={tutorial.id} className="p-6 hover:shadow-lg transition-shadow">
+          {courses.map((course) => (
+            <Card key={course.id} className="p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Icon name={tutorial.icon as any} size={24} className="text-primary" />
+                  <Icon name={course.icon as any} size={24} className="text-primary" />
                 </div>
                 <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                  {tutorial.duration}
+                  {course.duration}
                 </span>
               </div>
               
-              <h3 className="text-lg font-bold text-foreground mb-2">{tutorial.title}</h3>
-              <p className="text-sm text-muted-foreground mb-4">{tutorial.description}</p>
+              <h3 className="text-lg font-bold text-foreground mb-2">{course.title}</h3>
+              <p className="text-sm text-muted-foreground mb-4">{course.description}</p>
               
               <div className="space-y-2">
-                {tutorial.steps.map((step, index) => (
+                {course.topics.map((topic, index) => (
                   <div key={index} className="flex items-start gap-2 text-sm">
                     <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                       <span className="text-xs font-bold text-primary">{index + 1}</span>
                     </div>
-                    <span className="text-muted-foreground">{step}</span>
+                    <span className="text-muted-foreground">{topic}</span>
                   </div>
                 ))}
               </div>
@@ -151,23 +229,23 @@ export default function TutorialPage() {
               <Icon name="Lightbulb" size={24} className="text-white" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Полезные советы</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">Рекомендации начинающим</h3>
               <ul className="space-y-2 text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <Icon name="Check" size={16} className="text-primary mt-1 shrink-0" />
-                  <span>Сохраняйте древо регулярно - автосохранение работает, но лучше перестраховаться</span>
+                  <span>Начните с опроса старших родственников — они хранят бесценную информацию</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" size={16} className="text-primary mt-1 shrink-0" />
-                  <span>Используйте экспорт для создания резервных копий перед большими изменениями</span>
+                  <span>Соберите все семейные документы, фотографии и записи в одном месте</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" size={16} className="text-primary mt-1 shrink-0" />
-                  <span>Добавляйте фотографии - так древо становится более живым и запоминающимся</span>
+                  <span>Фиксируйте источники информации для каждого факта в родословной</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Icon name="Check" size={16} className="text-primary mt-1 shrink-0" />
-                  <span>Заполняйте даты и места - эта информация важна для будущих поколений</span>
+                  <span>Будьте готовы к длительным исследованиям — генеалогия требует терпения</span>
                 </li>
               </ul>
             </div>
