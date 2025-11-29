@@ -80,9 +80,13 @@ export default function TreePage() {
       <div className="h-16 bg-white border-b border-border flex items-center justify-between px-6 shrink-0">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => {
+              localStorage.removeItem('session_token');
+              localStorage.removeItem('user_data');
+              navigate('/');
+            }}
             className="text-muted-foreground hover:text-primary transition-colors"
-            title="Вернуться на главную"
+            title="Выйти на главную"
           >
             <Icon name="Home" size={20} />
           </button>
