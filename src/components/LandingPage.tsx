@@ -84,15 +84,15 @@ export default function LandingPage({ onStart, onGoToDashboard, onGoToTree }: La
             <button onClick={() => setCurrentPage('pricing')} className={`hover:text-primary transition-all ${currentPage === 'pricing' ? 'text-primary font-semibold' : ''}`}>
               Тарифы
             </button>
-            <a href="/tutorial" className="hover:text-primary transition-all">
+            <button onClick={() => window.location.href = '/tutorial'} className="hover:text-primary transition-all">
               Обучение
-            </a>
-            <a href="/archive" className="hover:text-primary transition-all">
+            </button>
+            <button onClick={() => window.location.href = '/archive'} className="hover:text-primary transition-all">
               Архивы
-            </a>
-            <a href="/support" className="hover:text-primary transition-all">
+            </button>
+            <button onClick={() => window.location.href = '/support'} className="hover:text-primary transition-all">
               Поддержка
-            </a>
+            </button>
           </div>
           <div className="flex gap-3 items-center">
             {isAuthenticated ? (

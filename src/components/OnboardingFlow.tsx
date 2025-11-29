@@ -141,7 +141,7 @@ export default function OnboardingFlow({ step, formData, onFormDataChange, onNex
             className="w-full mt-6"
             disabled={step === 1 && (!formData.firstName || !formData.lastName)}
           >
-            {step === 3 ? 'Перейти в кабинет' : 'Далее'} <Icon name="ChevronRight" size={16} />
+            {step === 3 ? 'Перейти к древу' : 'Далее'} <Icon name="ChevronRight" size={16} />
           </Button>
         </div>
       </Card>

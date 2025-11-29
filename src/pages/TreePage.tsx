@@ -168,13 +168,6 @@ export default function TreePage() {
             </button>
           )}
 
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="text-muted-foreground hover:text-primary transition-colors"
-            title="Личный кабинет"
-          >
-            <Icon name="LayoutDashboard" size={20} />
-          </button>
           <HelpTooltip />
           
           <button 
